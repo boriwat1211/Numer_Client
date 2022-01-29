@@ -1,38 +1,61 @@
-.App {
-  text-align: center;
+.Main
+{
+    display: flex;
+    position: relative;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: lightcoral;
+}
+.Left
+{
+    display: block;
+    position: relative;
+    background-color: lightpink;
+    min-width: 5vw;
+    min-height: 100vh;
+}
+.Right
+{
+    display: block;
+    position: relative;
+    background-color: lightsalmon;
+    min-width: 95vw;
+    min-height: 100vh;
+}
+.Left:hover  ~ .Right
+{
+    animation-name: HoverR;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards; 
+}
+.Left:hover
+{
+    animation-name: HoverL;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+@keyframes HoverL {
+    10%   {min-width: 7vw}
+    20%   {min-width: 9vw}
+    30%   {min-width: 11vw}
+    40%   {min-width: 13vw}
+    50%   {min-width: 15vw}
+    60%   {min-width: 17vw}
+    70%   {min-width: 19vw}
+    80%   {min-width: 21vw}
+    90%   {min-width: 23vw}
+    100%   {min-width: 25vw}
+}
+@keyframes HoverR {
+    10%   {min-width: 93vw}
+    20%   {min-width: 91vw}
+    30%   {min-width: 89vw}
+    40%   {min-width: 87vw}
+    50%   {min-width: 85vw}
+    60%   {min-width: 83vw}
+    70%   {min-width: 81vw}
+    80%   {min-width: 79vw}
+    90%   {min-width: 77vw}
+    100%   {min-width: 75vw}
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
