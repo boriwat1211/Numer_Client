@@ -4,6 +4,8 @@ import withRouter from "./Custom_HOC";
 import Charts from "./Charts";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { xonokai } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import * as math from 'mathjs'
+import { MathJax, MathJaxContext} from "better-react-mathjax";
 interface Bitsection
 {
     XL:string,
@@ -30,6 +32,11 @@ interface ServerResponse_Data
     Code:String,
     Code_Run:String
     Question:Array<String>
+}
+interface ServerResponse_Result
+{
+    Result:Number,
+    Error:Array<Number>
 }
 interface Iprops
 {
@@ -70,22 +77,22 @@ class Data extends React.Component<Iprops,Istate>
         const custom_param:Cutom_list = {
             Bitsection:
             {
-                XL:"",
-                XR:""
+                XL:"1",
+                XR:"100"
             },
             FalsePosition:
             {
-                XL:"",
-                XR:""
+                XL:"1",
+                XR:"100"
             },
             NewtonRaphson:
             {
-                Diff_Question:"",
-                X0:""
+                Diff_Question:"2*x",
+                X0:"0.1"
             },
             OnePointIteration:
             {
-                X0:""
+                X0:"0.1"
             }
         }
         this.state=
@@ -104,10 +111,55 @@ class Data extends React.Component<Iprops,Istate>
             Custom_Para:false,
             Cerrent_Question:"",
             Custom_Para_list:custom_param
-        }    
-        this.get_Data()    
+        }   
+        this.get_Data2() 
     }
-    get_Data = () =>
+    Get_Result = () =>
+    {
+        switch (this.state.SubHeader)
+        {
+            case "Bitsection":
+                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
+                {
+                    params:{
+                        XL:this.state.Custom_Para_list.Bitsection.XL,
+                        XR:this.state.Custom_Para_list.Bitsection.XR,
+                        Question:this.state.Cerrent_Question
+                    }
+                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                break
+            case "FalsePosition":
+                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
+                {
+                    params:{
+                        XL:this.state.Custom_Para_list.FalsePosition.XL,
+                        XR:this.state.Custom_Para_list.FalsePosition.XR,
+                        Question:this.state.Cerrent_Question
+                    }
+                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                break
+            case "NewtonRaphson":
+                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
+                {
+                    params:{
+                        X0:this.state.Custom_Para_list.NewtonRaphson.X0,
+                        Dif:this.state.Custom_Para_list.NewtonRaphson.Diff_Question,
+                        Question:this.state.Cerrent_Question
+                    }
+                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                break
+            case "OnePointIteration":
+                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
+                {
+                    params:{
+                        X0:this.state.Custom_Para_list.OnePointIteration.X0,
+                        Question:this.state.Cerrent_Question
+                    }
+                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                break
+        }
+    }
+    get_Data2 = () =>
     {
         axios.get<ServerResponse_Data>("http://localhost:6060/Data/"+this.state.Header+"/"+this.state.SubHeader).then((res)=>{
             let Data : any = {
@@ -116,18 +168,9 @@ class Data extends React.Component<Iprops,Istate>
                 Code:res.data.Code,
                 Question:res.data.Question
             }
-            this.setState({Data:Data},()=>{
-                const code:string = `({Lab1(question,XL = 1,XR = 100,X0 = 0.1,diff_question = '2*x'){
-                    ${this.state.Data.Code}
-                return Main(question,XL,XR,X0,diff_question)}
-                })`
-                let result:any = eval(code)
-                // this.setState({Cal:result},()=>this.setState({Result:this.state.Cal.Lab1()},()=>{this.setState({Cerrent_Question:this.state.Data.Question[0].toString()})}))
-                this.setState({Cal:result},()=>this.setState({Cerrent_Question:this.state.Data.Question[0].toString()},()=>{
-                    let [result,Error] = this.state.Cal.Lab1(this.state.Cerrent_Question)
-                    this.setState({Result:result},()=>this.setState({LoopError:Error}))
-                }))
-            })
+            this.setState({Data:Data},()=>{this.setState({Cerrent_Question:this.state.Data.Question[0].toString()},()=>{
+                this.Get_Result()
+            })})
         })
     }
     reset_para = () =>
@@ -135,25 +178,25 @@ class Data extends React.Component<Iprops,Istate>
         const custom_param:Cutom_list = {
             Bitsection:
             {
-                XL:"",
-                XR:""
+                XL:"1",
+                XR:"100"
             },
             FalsePosition:
             {
-                XL:"",
-                XR:""
+                XL:"1",
+                XR:"100"
             },
             NewtonRaphson:
             {
-                Diff_Question:"",
-                X0:""
+                Diff_Question:"2*x",
+                X0:"0.1"
             },
             OnePointIteration:
             {
-                X0:""
+                X0:"0.1"
             }
         }
-        this.setState({Custom_Para:false,Cerrent_Question:"",Result:0,Custom_Para_list:custom_param},()=>this.get_Data())
+        this.setState({Custom_Para:false,Cerrent_Question:"",Result:0,Custom_Para_list:custom_param},()=>this.get_Data2())
     }
     componentDidUpdate = () =>
     {
@@ -195,8 +238,7 @@ class Data extends React.Component<Iprops,Istate>
                         }
                         else
                         {
-                            let [result,Error] = this.state.Cal.Lab1(this.state.Cerrent_Question,parseFloat(this.state.Custom_Para_list.Bitsection.XL),parseFloat(this.state.Custom_Para_list.Bitsection.XR),0,"")
-                            this.setState({Result:result},()=>this.setState({LoopError:Error}))
+                            this.Get_Result()
                         }
                         break
                     case "FalsePosition" :
@@ -206,8 +248,7 @@ class Data extends React.Component<Iprops,Istate>
                         }
                         else
                         {
-                            let [result,Error] =this.state.Cal.Lab1(this.state.Cerrent_Question,parseFloat(this.state.Custom_Para_list.FalsePosition.XL),parseFloat(this.state.Custom_Para_list.FalsePosition.XR),0,"")
-                            this.setState({Result:result},()=>this.setState({LoopError:Error}))
+                            this.Get_Result()
                         }
                         break
                     case "NewtonRaphson" :
@@ -217,8 +258,7 @@ class Data extends React.Component<Iprops,Istate>
                         }
                         else
                         {
-                            let [result,Error] = this.state.Cal.Lab1(this.state.Cerrent_Question,0,0,parseFloat(this.state.Custom_Para_list.NewtonRaphson.X0),this.state.Custom_Para_list.NewtonRaphson.Diff_Question)
-                            this.setState({Result:result},()=>this.setState({LoopError:Error}))
+                            this.Get_Result()
                         }
                         break
                     case "OnePointIteration":
@@ -228,8 +268,7 @@ class Data extends React.Component<Iprops,Istate>
                         }
                         else
                         {
-                            let [result,Error] =this.state.Cal.Lab1(this.state.Cerrent_Question,0,0,parseFloat(this.state.Custom_Para_list.OnePointIteration.X0),"")
-                            this.setState({Result:result},()=>this.setState({LoopError:Error}))
+                            this.Get_Result()
                         }
                         break
                 }
@@ -279,8 +318,7 @@ class Data extends React.Component<Iprops,Istate>
     set_Current_Question = (e:ChangeEvent<HTMLSelectElement>) =>
     {
         this.setState({Cerrent_Question:e.target.value},()=>{
-            let [result,Error] = this.state.Cal.Lab1(this.state.Cerrent_Question)
-            this.setState({Result:result},()=>this.setState({LoopError:Error}))
+            this.Get_Result()
         })
     }
     get_custom_param = () =>
@@ -378,6 +416,29 @@ class Data extends React.Component<Iprops,Istate>
         }
         return result
     }
+    showEquation = () =>
+    {
+        if(this.state.Cerrent_Question!=="")
+        {
+            try{
+                return(
+                    <MathJax dynamic>{"\\("+math.parse(this.state.Cerrent_Question.toString().replace(/\r/g,"")).toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
+                )
+            }
+            catch(err:any)
+            {
+                return(
+                    <MathJax  dynamic style={{color:"red"}}>{err.toString()}</MathJax>
+                )
+            }
+        }
+        else
+        {
+            return(
+                <MathJax></MathJax>
+            )
+        }
+    }
     render()
     {
         return(
@@ -435,7 +496,9 @@ class Data extends React.Component<Iprops,Istate>
                         </button>
                     </div>
                     <div>
-                        <h2>Current Question : {this.state.Cerrent_Question}</h2>
+                        <MathJaxContext>
+                            <h2>Current Question : {this.showEquation()}</h2>
+                        </MathJaxContext>
                     </div>
                     <div>
                         <h2>Result : {this.state.Result}</h2>

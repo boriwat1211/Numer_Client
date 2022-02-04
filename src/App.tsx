@@ -90,6 +90,9 @@ class App extends React.Component<IProps,IState>
         <div className='Left' onMouseOver={()=>{if(this.state.collapsed){this.setState({collapsed:false})}}}>
           <ProSidebar collapsed = {this.state.collapsed}>
             <Menu>
+              <MenuItem key={"HOME"}>HOME
+                <Link to = {"/"}/>
+              </MenuItem>
               {this.get_Header_Menu()}
             </Menu>
           </ProSidebar>
