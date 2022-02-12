@@ -6,6 +6,8 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { xonokai } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import * as math from 'mathjs'
 import { MathJax, MathJaxContext} from "better-react-mathjax";
+import { config } from "process";
+import qs from "qs";
 interface Bitsection
 {
     XL:string,
@@ -44,6 +46,7 @@ interface Iprops
         Header:String,
         SubHeader:String
     }
+    Token:String
 }
 interface Cutom_list
 {
@@ -125,7 +128,11 @@ class Data extends React.Component<Iprops,Istate>
                         XL:this.state.Custom_Para_list.Bitsection.XL,
                         XR:this.state.Custom_Para_list.Bitsection.XR,
                         Question:this.state.Cerrent_Question
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + this.props.Token 
                     }
+
                 }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
                 break
             case "FalsePosition":
@@ -135,6 +142,9 @@ class Data extends React.Component<Iprops,Istate>
                         XL:this.state.Custom_Para_list.FalsePosition.XL,
                         XR:this.state.Custom_Para_list.FalsePosition.XR,
                         Question:this.state.Cerrent_Question
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + this.props.Token 
                     }
                 }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
                 break
@@ -145,6 +155,9 @@ class Data extends React.Component<Iprops,Istate>
                         X0:this.state.Custom_Para_list.NewtonRaphson.X0,
                         Dif:this.state.Custom_Para_list.NewtonRaphson.Diff_Question,
                         Question:this.state.Cerrent_Question
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + this.props.Token 
                     }
                 }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
                 break
@@ -154,6 +167,9 @@ class Data extends React.Component<Iprops,Istate>
                     params:{
                         X0:this.state.Custom_Para_list.OnePointIteration.X0,
                         Question:this.state.Cerrent_Question
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + this.props.Token 
                     }
                 }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
                 break
@@ -161,7 +177,12 @@ class Data extends React.Component<Iprops,Istate>
     }
     get_Data2 = () =>
     {
-        axios.get<ServerResponse_Data>("http://localhost:6060/Data/"+this.state.Header+"/"+this.state.SubHeader).then((res)=>{
+        
+        axios.get<ServerResponse_Data>("http://localhost:6060/Data/"+this.state.Header+"/"+this.state.SubHeader,{
+            headers: {
+                Authorization: 'Bearer ' + this.props.Token 
+              }
+        }).then((res)=>{
             let Data : any = {
                 Name:res.data.Name,
                 Context:res.data.Context,
