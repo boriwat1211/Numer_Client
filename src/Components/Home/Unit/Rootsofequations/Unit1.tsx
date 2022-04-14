@@ -1,13 +1,19 @@
 import axios from "axios";
 import React, { ChangeEvent } from "react";
-import withRouter from "./Custom_HOC";
-import Charts from "./Charts";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import { xonokai } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import * as math from 'mathjs'
 import { MathJax, MathJaxContext} from "better-react-mathjax";
-import { config } from "process";
-import qs from "qs";
+import {Cal_Bitsection,Cal_FalsePosition,Cal_NewtonRaphson,Cal_OnePointiteration, Cal_Secant} from "./Unit1_code"
+import Unit1Chart from "./Unit1_Charts";
+//MUI///
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { Button, FormControl } from "@mui/material";
+import TextField from '@mui/material/TextField';
+//-----//
 interface Bitsection
 {
     XL:string,
@@ -18,7 +24,7 @@ interface FalsePosition
     XL:string,
     XR:string
 }
-interface  NewtonRaphson
+interface NewtonRaphson
 {
     Diff_Question:string,
     X0:string
@@ -27,25 +33,28 @@ interface OnePointIteration
 {
     X0:string
 }
+interface Secant
+{
+    X0:string
+    X1:string
+} 
 interface ServerResponse_Data
 {
     Name:String,
     Context:String,
-    Code:String,
-    Code_Run:String
     Question:Array<String>
 }
-interface ServerResponse_Result
-{
-    Result:Number,
-    Error:Array<Number>
-}
+
+// interface ServerResponse_Result
+// {
+//     Result:Number,
+//     Loop_Result:Array<number>
+//     Loop_Error:Array<number>
+// }
 interface Iprops
 {
-    params:{
-        Header:String,
-        SubHeader:String
-    }
+    Header:String,
+    SubHeader:String
     Token:String
 }
 interface Cutom_list
@@ -54,25 +63,28 @@ interface Cutom_list
     FalsePosition: FalsePosition
     NewtonRaphson: NewtonRaphson
     OnePointIteration: OnePointIteration
+    Secant:Secant
 }
 interface Istate
 {
     Data:{
         Name:String,
         Context:String,
-        Code:String,
         Question:Array<String>
     },
     Header:String,
     SubHeader:String,
-    Cal:any,
     Result:Number,
-    LoopError:Array<Number>
+    LoopResult:Array<number>,
+    LoopError:Array<number>,
     Custom_Para:boolean,
-    Cerrent_Question:string
-    Custom_Para_list:Cutom_list
+    Cerrent_Question:string,
+    Custom_Para_list:Cutom_list,
+    Check_code:boolean
+    L:Array<number>
+    R:Array<number>
 }
-class Data extends React.Component<Iprops,Istate>
+class Unit1 extends React.Component<Iprops,Istate>
 {
     constructor(props:Iprops)
     {
@@ -80,12 +92,12 @@ class Data extends React.Component<Iprops,Istate>
         const custom_param:Cutom_list = {
             Bitsection:
             {
-                XL:"1",
+                XL:"0.1",
                 XR:"100"
             },
             FalsePosition:
             {
-                XL:"1",
+                XL:"0.01",
                 XR:"100"
             },
             NewtonRaphson:
@@ -96,6 +108,10 @@ class Data extends React.Component<Iprops,Istate>
             OnePointIteration:
             {
                 X0:"0.1"
+            },
+            Secant:{
+                X0:"3",
+                X1:"1.156"
             }
         }
         this.state=
@@ -103,93 +119,68 @@ class Data extends React.Component<Iprops,Istate>
             Data:{
                 Name:" ",
                 Context:" ",
-                Code:" ",
                 Question:[]
             },
-            Header:this.props.params.Header,
-            SubHeader:this.props.params.SubHeader,
-            Cal:null,
+            Header:this.props.Header,
+            SubHeader:this.props.SubHeader,
             Result:0,
+            LoopResult:[],
             LoopError:[],
             Custom_Para:false,
             Cerrent_Question:"",
-            Custom_Para_list:custom_param
+            Custom_Para_list:custom_param,
+            Check_code:false,
+            L:[],
+            R:[]
         }   
-        this.get_Data2() 
+        this.get_Data() 
     }
     Get_Result = () =>
     {
+        let Result:any,Loop_Result:any,Loop_Error:any,L:any,R:any;
         switch (this.state.SubHeader)
         {
             case "Bitsection":
-                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
-                {
-                    params:{
-                        XL:this.state.Custom_Para_list.Bitsection.XL,
-                        XR:this.state.Custom_Para_list.Bitsection.XR,
-                        Question:this.state.Cerrent_Question
-                    },
-                    headers: {
-                        Authorization: 'Bearer ' + this.props.Token 
-                    }
-
-                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                let bisection:Cal_Bitsection = new Cal_Bitsection(this.state.Cerrent_Question,this.state.Custom_Para_list.Bitsection.XL,this.state.Custom_Para_list.Bitsection.XR,"0","","0") as Cal_Bitsection;
+                [Result,Loop_Result,Loop_Error,L,R] = bisection.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error},()=>{this.setState({L:L},()=>{this.setState({R:R})})})})})
                 break
             case "FalsePosition":
-                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
-                {
-                    params:{
-                        XL:this.state.Custom_Para_list.FalsePosition.XL,
-                        XR:this.state.Custom_Para_list.FalsePosition.XR,
-                        Question:this.state.Cerrent_Question
-                    },
-                    headers: {
-                        Authorization: 'Bearer ' + this.props.Token 
-                    }
-                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                let FalsePosition:Cal_FalsePosition = new Cal_FalsePosition(this.state.Cerrent_Question,this.state.Custom_Para_list.FalsePosition.XL,this.state.Custom_Para_list.FalsePosition.XR,"0","","0") as Cal_FalsePosition
+                [Result,Loop_Result,Loop_Error,L,R] = FalsePosition.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error},()=>{this.setState({L:L},()=>{this.setState({R:R})})})})})
                 break
             case "NewtonRaphson":
-                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
-                {
-                    params:{
-                        X0:this.state.Custom_Para_list.NewtonRaphson.X0,
-                        Dif:this.state.Custom_Para_list.NewtonRaphson.Diff_Question,
-                        Question:this.state.Cerrent_Question
-                    },
-                    headers: {
-                        Authorization: 'Bearer ' + this.props.Token 
-                    }
-                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                let NewtonRaphson:Cal_NewtonRaphson = new Cal_NewtonRaphson(this.state.Cerrent_Question,"","",this.state.Custom_Para_list.NewtonRaphson.X0,this.state.Custom_Para_list.NewtonRaphson.Diff_Question,"0") as Cal_NewtonRaphson
+                [Result,Loop_Result,Loop_Error] = NewtonRaphson.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
                 break
             case "OnePointIteration":
-                axios.get<ServerResponse_Result>("http://localhost:6060/Result/"+this.state.Header+"/"+this.state.SubHeader,
-                {
-                    params:{
-                        X0:this.state.Custom_Para_list.OnePointIteration.X0,
-                        Question:this.state.Cerrent_Question
-                    },
-                    headers: {
-                        Authorization: 'Bearer ' + this.props.Token 
-                    }
-                }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopError:res.data.Error})})})
+                let OnePointIteration:Cal_OnePointiteration = new Cal_OnePointiteration(this.state.Cerrent_Question,"","",this.state.Custom_Para_list.OnePointIteration.X0,"","0") as Cal_OnePointiteration
+                [Result,Loop_Result,Loop_Error] = OnePointIteration.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
+                break
+            case "Secant":
+                let Secant:Cal_Secant = new Cal_Secant(this.state.Cerrent_Question,"","",this.state.Custom_Para_list.OnePointIteration.X0,"",this.state.Custom_Para_list.Secant.X1) as Cal_Secant
+                [Result,Loop_Result,Loop_Error] = Secant.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
                 break
         }
     }
-    get_Data2 = () =>
-    {
-        
-        axios.get<ServerResponse_Data>("http://localhost:6060/Data/"+this.state.Header+"/"+this.state.SubHeader,{
-            headers: {
+    get_Data = () =>
+    {   
+        axios.get<ServerResponse_Data>("http://localhost:6061/Data/"+this.state.SubHeader,
+        {
+            headers:{
                 Authorization: 'Bearer ' + this.props.Token 
-              }
+            }
         }).then((res)=>{
             let Data : any = {
                 Name:res.data.Name,
                 Context:res.data.Context,
-                Code:res.data.Code,
                 Question:res.data.Question
             }
-            this.setState({Data:Data},()=>{this.setState({Cerrent_Question:this.state.Data.Question[0].toString()},()=>{
+            this.setState({Data:Data},()=>{this.setState({Cerrent_Question:this.state.Data.Question[0].toString().replace(/\r/g,"")},()=>{
                 this.Get_Result()
             })})
         })
@@ -204,7 +195,7 @@ class Data extends React.Component<Iprops,Istate>
             },
             FalsePosition:
             {
-                XL:"1",
+                XL:"0.01",
                 XR:"100"
             },
             NewtonRaphson:
@@ -215,22 +206,33 @@ class Data extends React.Component<Iprops,Istate>
             OnePointIteration:
             {
                 X0:"0.1"
+            },
+            Secant:{
+                X0:"3",
+                X1:"1.156"
             }
         }
-        this.setState({Custom_Para:false,Cerrent_Question:"",Result:0,Custom_Para_list:custom_param},()=>this.get_Data2())
+        this.setState({Custom_Para:false,Cerrent_Question:"",Result:0,Custom_Para_list:custom_param},()=>this.get_Data())
     }
     componentDidUpdate = () =>
     {
-        if(this.state.Header!==this.props.params.Header || this.state.SubHeader!==this.props.params.SubHeader)
+        if(this.state.Header!==this.props.Header || this.state.SubHeader!==this.props.SubHeader)
         {
-            this.setState({Header:this.props.params.Header})
-            this.setState({SubHeader:this.props.params.SubHeader},()=>this.reset_para())
+            this.setState({Header:this.props.Header})
+            this.setState({SubHeader:this.props.SubHeader},()=>this.reset_para())
         }
         return null;
     }
     handelCheckbox = (e:ChangeEvent<HTMLInputElement>)=>
     {
-        this.setState({Custom_Para:e.target.checked})
+        if(e.target.name==="ShowCode")
+        {
+            this.setState({Check_code:e.target.checked})
+        }
+        else
+        {
+            this.setState({Custom_Para:e.target.checked})
+        }
     }
     handelQuestion = (e:ChangeEvent<HTMLInputElement>) =>
     {
@@ -292,6 +294,16 @@ class Data extends React.Component<Iprops,Istate>
                             this.Get_Result()
                         }
                         break
+                    case "Secant":
+                        if(Object.values(this.state.Custom_Para_list.Secant).includes(""))
+                        {
+                            alert("Enter all inputs!!")
+                        }
+                        else
+                        {
+                            this.Get_Result()
+                        }
+                    break
                 }
             }
             else 
@@ -321,26 +333,53 @@ class Data extends React.Component<Iprops,Istate>
             case "OnePointIteration":
                 para.OnePointIteration[e.target.name as keyof OnePointIteration] = e.target.value
                 break
+            case "Secant":
+                para.Secant[e.target.name as keyof Secant] = e.target.value
+                break
         }
         this.setState({Custom_Para_list:para})
     }
-    get_Select_Question = () =>
-    {
-        let result:Array<any> = []
-        if(this.state.Data.Question.length !== 0)
-        {   
-            for(let i = 0;i<this.state.Data.Question.length;i++)
-            {
-                result.push(<option key={i.toString()} value={this.state.Data.Question[i].toString()}>{this.state.Data.Question[i].toString()}</option>)
-            }
-        }
-        return result
-    }
-    set_Current_Question = (e:ChangeEvent<HTMLSelectElement>) =>
+    // get_Select_Question = () =>
+    // {
+    //     let result:Array<any> = []
+    //     if(this.state.Data.Question.length !== 0)
+    //     {   
+    //         for(let i = 0;i<this.state.Data.Question.length;i++)
+    //         {
+    //             result.push(<option key={i.toString()} value={this.state.Data.Question[i].toString().replace(/\r/g,"")}>{this.state.Data.Question[i].toString()}</option>)
+    //         }
+    //     }
+    //     return result
+    // }
+    // set_Current_Question = (e:ChangeEvent<HTMLSelectElement>) =>
+    // {
+    //     this.setState({Cerrent_Question:e.target.value},()=>{
+    //         this.Get_Result()
+    //     })
+    // }
+    set_Current_Question = (e:SelectChangeEvent) =>
     {
         this.setState({Cerrent_Question:e.target.value},()=>{
             this.Get_Result()
         })
+    }
+    get_Select_Question = () =>
+    {
+        let result:Array<any> = []
+        if(this.state.Data.Question.length !== 0&&this.state.Cerrent_Question!=="")
+        {   
+            for(let i = 0;i<this.state.Data.Question.length;i++)
+            {
+                result.push(
+                <MenuItem key={i.toString()} value={this.state.Data.Question[i].toString().replace(/\r/g,"")}>
+                        <MathJaxContext>
+                            <MathJax dynamic inline >{"\\("+math.parse(this.state.Data.Question[i].toString().replace(/\r/g,"")).toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
+                        </MathJaxContext>
+                </MenuItem>
+                )
+            }
+        }
+        return result
     }
     get_custom_param = () =>
     {
@@ -353,7 +392,10 @@ class Data extends React.Component<Iprops,Istate>
                     result.push(
                         <label key={i.toString()}>
                             {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
+                            <TextField 
+                                label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                variant="outlined"
+                                margin="normal"
                                 key={i.toString()}
                                 disabled = {(!this.state.Custom_Para)}
                                 type="number" 
@@ -361,7 +403,7 @@ class Data extends React.Component<Iprops,Istate>
                                 name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
                                 onChange={this.handelCustom}
                             >
-                            </input>
+                            </TextField>
                         </label>
                     )
                     break
@@ -369,7 +411,10 @@ class Data extends React.Component<Iprops,Istate>
                     result.push(
                         <label key={i.toString()}>
                             {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
+                            <TextField 
+                                label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                variant="outlined"
+                                margin="normal"
                                 key={i.toString()}
                                 disabled = {(!this.state.Custom_Para)}
                                 type="number" 
@@ -377,7 +422,7 @@ class Data extends React.Component<Iprops,Istate>
                                 name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
                                 onChange={this.handelCustom}
                             >
-                            </input>
+                            </TextField>
                         </label>
                     )
                     break
@@ -387,7 +432,10 @@ class Data extends React.Component<Iprops,Istate>
                         result.push(
                             <label key={i.toString()}>
                                 {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                                <input 
+                                <TextField 
+                                    label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                    variant="outlined"
+                                    margin="normal"
                                     key={i.toString()}
                                     disabled = {(!this.state.Custom_Para)}
                                     type="text" 
@@ -395,7 +443,7 @@ class Data extends React.Component<Iprops,Istate>
                                     name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
                                     onChange={this.handelCustom}
                                 >
-                                </input>
+                                </TextField>
                             </label>
                         )
                     }
@@ -404,7 +452,10 @@ class Data extends React.Component<Iprops,Istate>
                         result.push(
                             <label key={i.toString()}>
                                 {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                                <input 
+                                <TextField
+                                    label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                    variant="outlined" 
+                                    margin="normal"
                                     key={i.toString()}
                                     disabled = {(!this.state.Custom_Para)}
                                     type="number" 
@@ -412,7 +463,7 @@ class Data extends React.Component<Iprops,Istate>
                                     name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
                                     onChange={this.handelCustom}
                                 >
-                                </input>
+                                </TextField>
                             </label>
                         )
                     }
@@ -421,7 +472,10 @@ class Data extends React.Component<Iprops,Istate>
                     result.push(
                         <label key={i.toString()}>
                             {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
+                            <TextField
+                                label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                variant="outlined"
+                                margin="normal"
                                 key={i.toString()}
                                 disabled = {(!this.state.Custom_Para)}
                                 type="number" 
@@ -429,7 +483,26 @@ class Data extends React.Component<Iprops,Istate>
                                 name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
                                 onChange={this.handelCustom}
                             >
-                            </input>
+                            </TextField>
+                        </label>
+                    )
+                    break
+                case "Secant":
+                    result.push(
+                        <label key={i.toString()}>
+                            {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
+                            <TextField 
+                                label={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                variant="outlined"
+                                margin="normal"
+                                key={i.toString()}
+                                disabled = {(!this.state.Custom_Para)}
+                                type="number" 
+                                value={this.state.Custom_Para_list.Secant[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof Secant]}
+                                name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
+                                onChange={this.handelCustom}
+                            >
+                            </TextField>
                         </label>
                     )
                     break
@@ -443,13 +516,13 @@ class Data extends React.Component<Iprops,Istate>
         {
             try{
                 return(
-                    <MathJax dynamic>{"\\("+math.parse(this.state.Cerrent_Question.toString().replace(/\r/g,"")).toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
+                    <MathJax dynamic inline >{"\\("+math.parse(this.state.Cerrent_Question.toString().replace(/\r/g,"")).toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
                 )
             }
             catch(err:any)
             {
                 return(
-                    <MathJax  dynamic style={{color:"red"}}>{err.toString()}</MathJax>
+                    <MathJax  dynamic inline style={{color:"red"}}>{err.toString()}</MathJax>
                 )
             }
         }
@@ -466,19 +539,30 @@ class Data extends React.Component<Iprops,Istate>
             <div>
                 <h1>{this.state.Data.Name}</h1>
                 <h2>{this.state.Data.Context}</h2>
-                <SyntaxHighlighter language="javascript" style={xonokai}>
-                    {this.state.Data.Code}
-                </SyntaxHighlighter>
-                <div style={{backgroundColor:"lightcoral"}}>
-                    <div>
+                <div>
+                    {/* <div>
                         <label>
                             Select Question :
                             <select value={this.state.Cerrent_Question} onChange={this.set_Current_Question}>
                                 {this.get_Select_Question()}
                             </select>
                         </label>
-                    </div>
+                    </div> */}
                     <div>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                            <InputLabel id="Select-Question-Unit1">Question</InputLabel>
+                            <Select
+                                disabled = {this.state.Custom_Para}
+                                labelId="Select-Question-Unit1"
+                                id="Select-Qusetion-Unit1-Value"
+                                value={this.state.Cerrent_Question}
+                                onChange={this.set_Current_Question}
+                            >
+                                {this.get_Select_Question()}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    {/* <div>
                         <label>
                             <input 
                                 type="checkbox" 
@@ -490,8 +574,13 @@ class Data extends React.Component<Iprops,Istate>
                             </input>
                             Custom!
                         </label>
-                    </div>
+                    </div> */}
                     <div>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox  checked={this.state.Custom_Para} onChange={this.handelCheckbox}/>} label="Custom Question"/>
+                        </FormGroup>
+                    </div>
+                    {/* <div>
                         <label>
                             Question:{" "}
                             <input 
@@ -503,18 +592,33 @@ class Data extends React.Component<Iprops,Istate>
                             >
                             </input>
                         </label>
+                    </div> */}
+                    <div>
+                        <label>
+                            Question:{" "}
+                            <TextField 
+                                label="Custom Question" 
+                                variant="outlined" 
+                                margin="normal"
+                                type="text" 
+                                name="Question" 
+                                value={this.state.Cerrent_Question} 
+                                onChange={this.handelQuestion} 
+                                disabled = {!this.state.Custom_Para}/>
+                        </label>
                     </div>
                     <div>
                         {this.get_custom_param()}
                     </div>
                     <div>
-                        <button 
+                        <Button 
+                            variant="contained"
                             disabled = {(!this.state.Custom_Para)}
                             name="Result"
                             onClick={this.handelResult}
                         >
                             calulator
-                        </button>
+                        </Button>
                     </div>
                     <div>
                         <MathJaxContext>
@@ -525,11 +629,11 @@ class Data extends React.Component<Iprops,Istate>
                         <h2>Result : {this.state.Result}</h2>
                     </div>
                     <div>
-                        <Charts loop_result={this.state.LoopError}/>
+                        <Unit1Chart Unit={this.state.SubHeader} loop_result={this.state.LoopResult} Loop_Error ={this.state.LoopError} L={this.state.L} R = {this.state.R} Q = {this.state.Cerrent_Question}/>
                     </div>
                 </div>
             </div>
         )
     }
 }
-export default withRouter(Data);
+export default Unit1;

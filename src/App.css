@@ -4,23 +4,24 @@
     position: relative;
     min-width: 100vw;
     min-height: 100vh;
-    background-color: lightcoral;
+    background-color:#1e37ae;
 }
 .Left
 {
     display: block;
     position: relative;
-    background-color: lightpink;
     min-width: 5vw;
-    min-height: 100vh;
+    min-height: 10vh;
 }
 .Right
 {
+    background-color: #FFFFFF;
     display: block;
     position: relative;
-    background-color: lightsalmon;
     min-width: 95vw;
     min-height: 100vh;
+    padding-top: 5vh;
+    padding-left: 5vw;
 }
 .Left:hover  ~ .Right
 {
