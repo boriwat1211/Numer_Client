@@ -549,7 +549,7 @@ class Unit1 extends React.Component<Iprops,Istate>
                         </label>
                     </div> */}
                     <div>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 400 }}>
                             <InputLabel id="Select-Question-Unit1">Question</InputLabel>
                             <Select
                                 disabled = {this.state.Custom_Para}

@@ -51,12 +51,13 @@ export class Cal_NewtonDividedDifference
     private Y:Array<number>
     private X_CAL:number
     private Point:Array<number>
-    constructor(x:string,y:string,x_cal:string,point:string)
+    constructor(x:Array<number>,y:Array<number>,x_cal:string,point:string)
     {
-        this.X = JSON.parse(x);
-        this.Y = JSON.parse(y);
+        this.X = JSON.parse(JSON.stringify(x));
+        this.Y = JSON.parse(JSON.stringify(y));
         this.X_CAL = parseFloat(x_cal);
-        this.Point = JSON.parse(point);
+        this.Point = JSON.parse("["+point+"]");
+        console.log(this.Point)
         for(let i:number =0;i<this.Point.length;i++) this.Point[i]-=1
     }
     public Result():number
@@ -81,12 +82,12 @@ export class Cal_LagrangeInterpolation
     private Y:Array<number>
     private X_CAL:number
     private Point:Array<number>
-    constructor(x:string,y:string,x_cal:string,point:string)
+    constructor(x:Array<number>,y:Array<number>,x_cal:string,point:string)
     {
-        this.X = JSON.parse(x);
-        this.Y = JSON.parse(y);
+        this.X = JSON.parse(JSON.stringify(x));
+        this.Y = JSON.parse(JSON.stringify(y));
         this.X_CAL = parseFloat(x_cal);
-        this.Point = JSON.parse(point);
+        this.Point = JSON.parse("["+point+"]");
         for(let i:number =0;i<this.Point.length;i++) this.Point[i]-=1
     }
     public Result():number

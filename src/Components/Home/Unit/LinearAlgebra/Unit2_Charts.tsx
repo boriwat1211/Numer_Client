@@ -28,7 +28,6 @@ class Unit2Chart extends React.Component<Iprops,Istate>
     }
     get_Data = () =>
     {
-        console.log(this.props.loop_result.length,this.props.Loop_Error.length)
         if(this.props.loop_result.length > 0&&this.props.Loop_Error.length>0 && this.props.Loop_Error.length===this.props.loop_result.length)
         {
             console.log(this.props.loop_result.length,this.props.Loop_Error.length)
@@ -78,50 +77,53 @@ class Unit2Chart extends React.Component<Iprops,Istate>
     getGraph = () =>
     {
         let Grap:Array<any>=[]
-        Grap.push(
-            <div key={1}>
-                <ResponsiveContainer width={"80%"} height = {600}>
-                    <LineChart
-                        data={this.state.Data}
-                        syncId="Result1"
-                        margin={{
-                            top: 30,
-                            right: 30,
-                            left: 30,
-                            bottom: 30
-                        }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {this.getResultGraph()}
-                        <Brush height={60} stroke={"pink"}/>
-                    </LineChart>
-                </ResponsiveContainer>
-                <ResponsiveContainer width={"80%"} height = {600}>
-                    <LineChart
-                        data={this.state.Data}
-                        syncId="Result2"
-                        margin={{
-                            top: 30,
-                            right: 30,
-                            left: 30,
-                            bottom: 30
-                        }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {this.getErrorGraph()}
-                        <Brush height={60} stroke={"pink"}/>
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-        )
+        if(this.props.Unit==="Conjugategradient"||this.props.Unit==="GaussSeidelIteration"||this.props.Unit==="JacobiIteration")
+        {
+            Grap.push(
+                <div key={1}>
+                    <ResponsiveContainer width={"80%"} height = {600}>
+                        <LineChart
+                            data={this.state.Data}
+                            syncId="Result1"
+                            margin={{
+                                top: 30,
+                                right: 30,
+                                left: 30,
+                                bottom: 30
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            {this.getResultGraph()}
+                            <Brush height={60} stroke={"#39b6ff"}/>
+                        </LineChart>
+                    </ResponsiveContainer>
+                    <ResponsiveContainer width={"80%"} height = {600}>
+                        <LineChart
+                            data={this.state.Data}
+                            syncId="Result2"
+                            margin={{
+                                top: 30,
+                                right: 30,
+                                left: 30,
+                                bottom: 30
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            {this.getErrorGraph()}
+                            <Brush height={60} stroke={"#39b6ff"}/>
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            )
+        }
         return Grap
     }
     getResultGraph = () =>
@@ -163,7 +165,7 @@ class Unit2Chart extends React.Component<Iprops,Istate>
     render()
     {
         return(
-            <div style={{ width: '100%' ,backgroundColor:"wheat"}}>
+            <div>
                 {this.getGraph()}
             </div>
         )

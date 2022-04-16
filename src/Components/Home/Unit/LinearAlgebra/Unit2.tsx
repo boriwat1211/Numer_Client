@@ -2,8 +2,22 @@ import axios from "axios";
 import React, { ChangeEvent } from "react";
 import * as math from 'mathjs'
 import { MathJax, MathJaxContext} from "better-react-mathjax";
-import { Cal_Conjugategradient, Cal_CramerRule, Cal_GaussElimination, Cal_GaussJordan, Cal_GaussSeidelIteration, Cal_JacobiIteration } from "./Unit2_code";
+import { Cal_Conjugategradient, Cal_CramerRule, Cal_GaussElimination, Cal_GaussJordan, Cal_GaussSeidelIteration, Cal_JacobiIteration , Cal_LUdecomposition} from "./Unit2_code";
 import Unit2Chart from "./Unit2_Charts";
+
+
+//MUI///
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { Button, FormControl } from "@mui/material";
+import TextField from '@mui/material/TextField';
+//-----//
+
+
 interface CramerRule
 {
    
@@ -25,6 +39,10 @@ interface GaussElimination
 
 }
 interface GaussJordan
+{
+
+}
+interface LUdecomposition
 {
 
 }
@@ -55,6 +73,7 @@ interface Cutom_list
     Conjugategradient:Conjugategradient
     GaussElimination:GaussElimination
     GaussJordan:GaussJordan
+    LUdecomposition:LUdecomposition
 }
 interface Istate
 {
@@ -104,6 +123,10 @@ class Unit2 extends React.Component<Iprops,Istate>
 
             },
             GaussJordan:
+            {
+
+            },
+            LUdecomposition:
             {
 
             }
@@ -178,7 +201,6 @@ class Unit2 extends React.Component<Iprops,Istate>
                 //         Authorization: 'Bearer ' + this.props.Token 
                 //     }
                 // }).then((res)=>{this.setState({Result:res.data.Result},()=>{this.setState({LoopResult:res.data.Loop_Result},()=>this.setState({LoopError:res.data.Loop_Error}))})})
-                console.log(this.state.Custom_Para_list.GaussSeidelIteration.Starter)
                 let GaussSeidelIteration:Cal_GaussSeidelIteration = new Cal_GaussSeidelIteration(this.state.Cerrent_Question1,this.state.Cerrent_Question2,this.state.Custom_Para_list.GaussSeidelIteration.Starter) as Cal_GaussSeidelIteration;
                 [Result,Loop_Result,Loop_Error] = GaussSeidelIteration.Result()
                 this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
@@ -198,6 +220,13 @@ class Unit2 extends React.Component<Iprops,Istate>
                 [Result,Loop_Result,Loop_Error] = GaussJordan.Result()
                 this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
                 break
+            case "LUdecomposition":
+                let LUdecomposition:Cal_LUdecomposition = new Cal_LUdecomposition(this.state.Cerrent_Question1,this.state.Cerrent_Question2) as Cal_LUdecomposition;
+                [Result,Loop_Result,Loop_Error] = LUdecomposition.Result()
+                this.setState({Result:Result},()=>{this.setState({LoopResult:Loop_Result},()=>{this.setState({LoopError:Loop_Error})})})
+                break
+            default:
+                
         }
     }
     get_Data = () =>
@@ -229,7 +258,8 @@ class Unit2 extends React.Component<Iprops,Istate>
                 Question1:res.data.Question1,
                 Question2:res.data.Question2
             }
-            this.setState({Data:Data},()=>{this.setState({Cerrent_Question1:JSON.parse(this.state.Data.Question1[0].toString().replace(/\r/g,""))},()=>{
+            this.setState({Data:Data},()=>{
+                this.setState({Cerrent_Question1:JSON.parse(this.state.Data.Question1[0].toString().replace(/\r/g,""))},()=>{
                 this.setState({Cerrent_Question2:JSON.parse(this.state.Data.Question2[0].toString().replace(/\r/g,""))},()=>
                     this.setState({dimensionY:JSON.parse(this.state.Data.Question1[0].toString().replace(/\r/g,"")).length.toString()},()=>{
                     this.setState({dimensionX:JSON.parse(this.state.Data.Question1[0].toString().replace(/\r/g,""))[0].length.toString()},()=>{
@@ -257,6 +287,10 @@ class Unit2 extends React.Component<Iprops,Istate>
                             GaussJordan:
                             {
                 
+                            },
+                            LUdecomposition:
+                            {
+
                             }
                         }
                         this.setState({Custom_Para_list:custom_param},()=>this.Get_Result())
@@ -291,6 +325,10 @@ class Unit2 extends React.Component<Iprops,Istate>
             GaussJordan:
             {
 
+            },
+            LUdecomposition:
+            {
+
             }
         }
         this.setState({Custom_Para:false,Cerrent_Question1:[],Result:[],Custom_Para_list:custom_param},()=>this.get_Data())
@@ -320,7 +358,7 @@ class Unit2 extends React.Component<Iprops,Istate>
         let check1:RegExp = new RegExp("dimensionX[0-9]+")
         let check2:RegExp = new RegExp("dimensionY[0-9]+")
         let check3:RegExp = new RegExp("dimensionS[0-9]+")
-        let check4:RegExp = new RegExp("^-[0-9]+$")
+        let check4:RegExp = new RegExp("^-?[0-9]*\\.?[0-9]*$")
         let check5:RegExp = new RegExp("^[0-9]+$")
         if(e.target.name === "Question1")
         {
@@ -346,7 +384,13 @@ class Unit2 extends React.Component<Iprops,Istate>
         }
         else if(check1.test(e.target.name))
         {  
-            if(check4.test(e.target.value)||check5.test(e.target.value))
+            if(e.target.value===""||e.target.value==="-")
+            {
+                let temp:Array<Array<number>> = this.state.Cerrent_Question1
+                temp[parseInt(e.target.name.split('X')[1].split('_')[0])][parseInt(e.target.name.split('X')[1].split('_')[1])] = parseFloat("0")
+                this.setState({Cerrent_Question1:temp})
+            }
+            else if(check4.test(e.target.value)||check5.test(e.target.value))
             {
                 let temp:Array<Array<number>> = this.state.Cerrent_Question1
                 temp[parseInt(e.target.name.split('X')[1].split('_')[0])][parseInt(e.target.name.split('X')[1].split('_')[1])] = parseFloat(e.target.value.toString())
@@ -367,16 +411,23 @@ class Unit2 extends React.Component<Iprops,Istate>
                     this.setState({Cerrent_Question1:temp})
                 }
             }
-            else if(e.target.value==="")
+            else if(e.target.value[e.target.value.length-1]==="+")
             {
                 let temp:Array<Array<number>> = this.state.Cerrent_Question1
-                temp[parseInt(e.target.name.split('X')[1].split('_')[0])][parseInt(e.target.name.split('X')[1].split('_')[1])] = parseFloat("0")
+                let temp_value:string =  parseFloat((parseFloat(e.target.value)+0.1).toString()).toPrecision(15);
+                temp[parseInt(e.target.name.split('X')[1].split('_')[0])][parseInt(e.target.name.split('X')[1].split('_')[1])] = parseFloat(temp_value)
                 this.setState({Cerrent_Question1:temp})
             }
         }
         else if(check2.test(e.target.name))
         {  
-            if(check4.test(e.target.value)||check5.test(e.target.value))
+            if(e.target.value===""||e.target.value==="-")
+            {
+                let temp:Array<number>= this.state.Cerrent_Question2
+                temp[parseInt(e.target.name.split('Y')[1])] = parseFloat("0")
+                this.setState({Cerrent_Question2:temp})
+            }
+            else if(check4.test(e.target.value)||check5.test(e.target.value))
             {
                 let temp:Array<number>= this.state.Cerrent_Question2
                 temp[parseInt(e.target.name.split('Y')[1])] = parseFloat(e.target.value.toString())
@@ -397,13 +448,13 @@ class Unit2 extends React.Component<Iprops,Istate>
                     this.setState({Cerrent_Question2:temp})
                 }
             }
-            else if(e.target.value==="")
+            else if(e.target.value[e.target.value.length-1]==="+")
             {
                 let temp:Array<number>= this.state.Cerrent_Question2
-                temp[parseInt(e.target.name.split('Y')[1])] = parseFloat("0")
+                let temp_value:string =  parseFloat((parseFloat(e.target.value)+0.1).toString()).toPrecision(15);
+                temp[parseInt(e.target.name.split('Y')[1])] = parseFloat(temp_value);
                 this.setState({Cerrent_Question2:temp})
             }
-
         }
         else if(check3.test(e.target.name))
         {
@@ -500,6 +551,10 @@ class Unit2 extends React.Component<Iprops,Istate>
                 GaussJordan:
                 {
     
+                },
+                LUdecomposition:
+                {
+
                 }
             }
             this.setState({Custom_Para_list:custom_param})
@@ -550,9 +605,12 @@ class Unit2 extends React.Component<Iprops,Istate>
                     GaussJordan:
                     {
         
+                    },
+                    LUdecomposition:
+                    {
+
                     }
                 }
-                console.log(custom_param);
                 this.setState({Custom_Para_list:custom_param})
             }))
         }
@@ -626,6 +684,16 @@ class Unit2 extends React.Component<Iprops,Istate>
                             this.Get_Result()
                         }
                         break
+                    case "LUdecomposition" :
+                        if(Object.values(this.state.Custom_Para_list.GaussJordan).includes(""))
+                        {
+                            alert("Enter all inputs!!")
+                        }
+                        else
+                        {
+                            this.Get_Result()
+                        }
+                        break
                 }
             }
             else 
@@ -645,17 +713,23 @@ class Unit2 extends React.Component<Iprops,Istate>
         {   
             for(let i:number = 0;i<this.state.Data.Question1.length;i++)
             {
-                result.push(<option key={i.toString()} value={this.state.Data.Question1[i].toString().replace(/\r/g,"")}>{this.state.Data.Question1[i].toString()}</option>)
+                result.push(
+                    <MenuItem key={i.toString()} value={this.state.Data.Question1[i].toString().replace(/\r/g,"")}>
+                            <MathJaxContext>
+                                <MathJax dynamic inline >{"\\("+math.parse(this.state.Data.Question1[i].toString().replace(/\r/g,"")).toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
+                            </MathJaxContext>
+                    </MenuItem>
+                )
             }
         }
         return result
     }
-    set_Current_Question = (e:ChangeEvent<HTMLSelectElement>) =>
+    set_Current_Question = (e:SelectChangeEvent) =>
     {
         let i:number = 0;
         for( i =0;i<this.state.Data.Question1.length;i++)
         {
-            if(e.target.value===this.state.Data.Question1[i].toString().replace(/\r/g,""))
+            if(e.target.value.toString()===this.state.Data.Question1[i].toString().replace(/\r/g,""))
             {
                 break
             }
@@ -689,6 +763,10 @@ class Unit2 extends React.Component<Iprops,Istate>
                         GaussJordan:
                         {
             
+                        },
+                        LUdecomposition:
+                        {
+
                         }
                     }
                     this.setState({Custom_Para_list:custom_param},()=>this.Get_Result())
@@ -711,19 +789,21 @@ class Unit2 extends React.Component<Iprops,Istate>
                     if(this.state.Cerrent_Question1.toString()!==""&&this.state.Cerrent_Question2.toString()!==""&&this.state.Custom_Para_list.JacobiIteration.Starter.toString()!==""){
                         if(this.state.Custom_Para_list.JacobiIteration[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof JacobiIteration].length.toString() === this.state.dimensionY &&this.state.dimensionY===this.state.Cerrent_Question1.length.toString() && this.state.dimensionX === this.state.Cerrent_Question1[0].length.toString() && this.state.dimensionY === this.state.Cerrent_Question2.length.toString())
                         {
-                            result.push(<label key={"Custom_Header"}>Custom JacobiIteration</label>)
+                            result.push(<label key={"Custom_Header"}>Start JacobiIteration</label>)
                             for(let j=0;j<Y;j++)
                             {
                                 result.push(
-                                    <input 
-                                        disabled = {(!this.state.Custom_Para)}
-                                        type="text" 
-                                        key={`${j}`}
-                                        name={`dimensionS${j}`}
-                                        value={this.state.Custom_Para_list.JacobiIteration[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof JacobiIteration][j]}
-                                        onChange={this.handelQuestion}
-                                    >
-                                    </input>
+                                    <div key={`${j}`}>
+                                        <TextField  
+                                            disabled = {(!this.state.Custom_Para)}
+                                            type="text" 
+                                            key={`${j}`}
+                                            name={`dimensionS${j}`}
+                                            value={this.state.Custom_Para_list.JacobiIteration[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof JacobiIteration][j]}
+                                            onChange={this.handelQuestion}
+                                        >
+                                        </TextField>
+                                    </div>
                                 )
                             }
                         }
@@ -734,12 +814,12 @@ class Unit2 extends React.Component<Iprops,Istate>
                     {
                         if(this.state.Custom_Para_list.GaussSeidelIteration[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof GaussSeidelIteration].length.toString() === this.state.dimensionY && this.state.dimensionY===this.state.Cerrent_Question1.length.toString() && this.state.dimensionX === this.state.Cerrent_Question1[0].length.toString() && this.state.dimensionY === this.state.Cerrent_Question2.length.toString())
                         {
-                            result.push(<label key={"Custom_Header"}>Custom GaussSeidelIteration</label>)
+                            result.push(<label key={"Custom_Header"}>Start GaussSeidelIteration</label>)
                             for(let j=0;j<Y;j++)
                             {
                                 result.push(
                                     <div key={`${j}`}>
-                                        <input 
+                                        <TextField  
                                             disabled = {(!this.state.Custom_Para)}
                                             type="text" 
                                             key={`${j}`}
@@ -747,7 +827,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                                             value={this.state.Custom_Para_list.GaussSeidelIteration[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof GaussSeidelIteration][j]}
                                             onChange={this.handelQuestion}
                                         >
-                                        </input>
+                                        </TextField>
                                     </div>
                                 )
                             }
@@ -759,12 +839,12 @@ class Unit2 extends React.Component<Iprops,Istate>
                     {
                         if(this.state.Custom_Para_list.Conjugategradient[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof Conjugategradient].length.toString() === this.state.dimensionY &&this.state.dimensionY===this.state.Cerrent_Question1.length.toString() && this.state.dimensionX === this.state.Cerrent_Question1[0].length.toString() && this.state.dimensionY === this.state.Cerrent_Question2.length.toString())
                         {
-                            result.push(<label key={"Custom_Header"}>Custom Conjugategradient</label>)
+                            result.push(<label key={"Custom_Header"}>Start Conjugategradient</label>)
                             for(let j=0;j<Y;j++)
                             {
                                 result.push(
                                     <div key={`${j}`}>
-                                        <input 
+                                        <TextField  
                                             disabled = {(!this.state.Custom_Para)}
                                             type="text" 
                                             key={`${j}`}
@@ -772,7 +852,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                                             value={this.state.Custom_Para_list.Conjugategradient[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof Conjugategradient][j]}
                                             onChange={this.handelQuestion}
                                         >
-                                        </input>
+                                        </TextField>
                                     </div>
                                 )
                             }
@@ -796,6 +876,8 @@ class Unit2 extends React.Component<Iprops,Istate>
                 case "GaussElimination" :
                     break
                 case "GaussJordan" : 
+                    break
+                case "LUdecomposition":
                     break
             }
         }
@@ -885,7 +967,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                     {
                         // console.log(i,j)
                         temp2.push(
-                            <input 
+                            <TextField 
                                 disabled = {(!this.state.Custom_Para)}
                                 type="text" 
                                 key={`${i}${j}`}
@@ -893,7 +975,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                                 value={this.state.Cerrent_Question1[i][j]}
                                 onChange={this.handelQuestion}
                             >
-                            </input>
+                            </TextField>
                         )
                     }
                     temp1.push(<div key={`${i}`}>{temp2}</div>)
@@ -915,7 +997,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                 {
                     temp1.push(
                         <div key={`${i}`}>
-                            <input 
+                            <TextField  
                                 disabled = {(!this.state.Custom_Para)}
                                 type="text" 
                                 key={`${i}`}
@@ -923,7 +1005,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                                 value={this.state.Cerrent_Question2[i]}
                                 onChange={this.handelQuestion}
                             >
-                            </input>
+                            </TextField>
                         </div>
                     )
                 }
@@ -938,16 +1020,30 @@ class Unit2 extends React.Component<Iprops,Istate>
             <div>
                 <h1>{this.state.Data.Name}</h1>
                 <h2>{this.state.Data.Context}</h2>
-                <div style={{backgroundColor:"lightcoral"}}>
-                    <div>
+                <div>
+                    {/* <div>
                         <label>
                             Select Question :
                             <select value={this.state.Cerrent_Question1.toString()} onChange={this.set_Current_Question}>
                                 {this.get_Select_Question()}
                             </select>
                         </label>
-                    </div>
+                    </div> */}
                     <div>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 400 }}>
+                            <InputLabel id="Select-Question-Unit2">Question</InputLabel>
+                            <Select
+                                disabled = {this.state.Custom_Para}
+                                labelId="Select-Question-Unit2"
+                                id="Select-Qusetion-Unit2-Value"
+                                value={JSON.stringify(this.state.Cerrent_Question1)==="[]"? "":JSON.stringify(this.state.Cerrent_Question1)}
+                                onChange={this.set_Current_Question}
+                            >
+                                {this.get_Select_Question()}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    {/* <div>
                         <label>
                             <input 
                                 type="checkbox" 
@@ -959,8 +1055,13 @@ class Unit2 extends React.Component<Iprops,Istate>
                             </input>
                             Custom!
                         </label>
-                    </div>
+                    </div> */}
                     <div>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox  checked={this.state.Custom_Para} onChange={this.handelCheckbox}/>} label="Custom Question"/>
+                        </FormGroup>
+                    </div>
+                    {/* <div>
                         <label>
                             X :{" "}
                             <input 
@@ -985,29 +1086,35 @@ class Unit2 extends React.Component<Iprops,Istate>
                             >
                             </input>
                         </label>
-                    </div>
+                    </div> */}
                     <div>
                         <label>
                         dimensionX :{" "}
-                            <input 
+                            <TextField 
+                                label="Custom Question" 
+                                variant="outlined" 
+                                margin="normal"
                                 disabled = {(!this.state.Custom_Para)}
                                 type="text" 
                                 name="dimensionX"
                                 value={this.state.dimensionX}
                                 onChange={this.handelQuestion}
                             >
-                            </input>
+                            </TextField>
                         </label>
                         <label>
                         dimensionY :{" "}
-                            <input 
+                            <TextField 
+                                label="Custom Question" 
+                                variant="outlined" 
+                                margin="normal"
                                 disabled = {(!this.state.Custom_Para)}
                                 type="text" 
                                 name="dimensionY"
                                 value={this.state.dimensionY}
                                 onChange={this.handelQuestion}
                             >
-                            </input>
+                            </TextField>
                         </label>
                     </div>
                     <div>
@@ -1016,19 +1123,18 @@ class Unit2 extends React.Component<Iprops,Istate>
                     </div>
                     <div>
                         <label>Y </label>
-                        {this.setInputMetrix_Y()}
-                    </div>
-                    <div>
+                        {this.setInputMetrix_Y()}  
                         {this.get_custom_param()}
                     </div>
                     <div>
-                        <button 
+                        <Button 
+                            variant="contained"
                             disabled = {(!this.state.Custom_Para)}
                             name="Result"
                             onClick={this.handelResult}
                         >
                             calulator
-                        </button>
+                        </Button>
                     </div>
                     <div style={{display: "flex"}}>
                         <MathJaxContext>

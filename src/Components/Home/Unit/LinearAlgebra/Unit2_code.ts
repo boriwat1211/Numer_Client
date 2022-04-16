@@ -8,9 +8,9 @@ export class Cal_Conjugategradient
     private Starter:Array<number>
     constructor(met1:Array<Array<number>>,met2:Array<number>,start:Array<number>)
     {
-        this.Met1 = met1;
-        this.Met2 = met2;
-        this.Starter = start;
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+        this.Starter = JSON.parse(JSON.stringify(start));
         this.LoopResult = [];
         this.LoopError = [];
 
@@ -51,8 +51,8 @@ export class Cal_CramerRule
     private Met2:Array<number>
     constructor(met1:Array<Array<number>>,met2:Array<number>)
     {
-       this.Met1 = met1;
-       this.Met2 = met2;
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
     }
     private changeMet(row:number)
     {
@@ -85,11 +85,11 @@ export class Cal_JacobiIteration
     private Starter:Array<number>
     constructor(met1:Array<Array<number>>,met2:Array<number>,start:Array<number>)
     {
-       this.Met1 = met1;
-       this.Met2 = met2;
-       this.Starter = start;
-       this.LoopResult = [];
-       this.LoopError = [];
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+        this.Starter = JSON.parse(JSON.stringify(start));
+        this.LoopResult = [];
+        this.LoopError = [];
     }
     private checkError(X:Array<number>,X_old:Array<number>)
     {
@@ -148,11 +148,11 @@ export class Cal_GaussSeidelIteration
     private Starter:Array<number>
     constructor(met1:Array<Array<number>>,met2:Array<number>,start:Array<number>)
     {
-       this.Met1 = met1;
-       this.Met2 = met2;
-       this.Starter = start;
-       this.LoopResult = [];
-       this.LoopError = [];
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+        this.Starter = JSON.parse(JSON.stringify(start));
+        this.LoopResult = [];
+        this.LoopError = [];
     }
     private checkError(X:Array<number>,X_old:Array<number>)
     {
@@ -179,7 +179,6 @@ export class Cal_GaussSeidelIteration
         {
             this.LoopError.push(dummy)
         }
-        console.log(dummy.length)
         return check;
     }
     public Result()
@@ -206,7 +205,6 @@ export class Cal_GaussSeidelIteration
             this.LoopResult.push(JSON.parse(JSON.stringify(X)))
             count++
         }
-        console.log(X);
         return [X,this.LoopResult,this.LoopError]
     }
 }
@@ -218,10 +216,10 @@ export class Cal_GaussElimination
     private LoopError:Array<Array<Number>>
     constructor(met1:Array<Array<number>>,met2:Array<number>)
     {
-       this.Met1 = met1;
-       this.Met2 = met2;
-       this.LoopResult = [];
-       this.LoopError = [];
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+        this.LoopResult = [];
+        this.LoopError = [];
     }
     public Result()
     {
@@ -282,10 +280,10 @@ export class Cal_GaussJordan
     private LoopError:Array<Array<Number>>
     constructor(met1:Array<Array<number>>,met2:Array<number>)
     {
-       this.Met1 = met1;
-       this.Met2 = met2;
-       this.LoopResult = [];
-       this.LoopError = [];
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+        this.LoopResult = [];
+        this.LoopError = [];
     }
     public Result()
     {
@@ -361,5 +359,78 @@ export class Cal_GaussJordan
             }
         }
         return [this.Met2,this.LoopResult,this.LoopError]
+    }
+}
+export class Cal_LUdecomposition
+{
+    private Met1:Array<Array<number>>
+    private Met2:Array<number>
+    constructor(met1:Array<Array<number>>,met2:Array<number>)
+    {
+        this.Met1 = JSON.parse(JSON.stringify(met1));
+        this.Met2 = JSON.parse(JSON.stringify(met2));
+    }
+    public Result()
+    {
+        let Result:Array<number> = [];
+        let Loop_Result:Array<number> = [];
+        let Loop_Error:Array<number> = [];
+        let Lower:Array<Array<number>> = Array(this.Met1.length).fill(0).map(x=>Array(this.Met1[0].length).fill(0));
+        let Upper:Array<Array<number>> = Array(this.Met1.length).fill(0).map(x=>Array(this.Met1[0].length).fill(0));
+        let Y:Array<number> = Array(this.Met1.length).fill(0);
+        let X:Array<number> = Array(this.Met1.length).fill(0);
+        for(let A:number = 0;A<this.Met1.length;A++)
+        {
+            for(let B:number = A;B<this.Met1[0].length;B++)
+            {
+                let sum:number = 0;
+                for(let C:number=0;C<A;C++)
+                {
+                    sum+= (Lower[A][C]*Upper[C][B]);
+                }
+                Upper[A][B] = this.Met1[A][B] - sum;
+            }
+            for(let B:number = A;B<this.Met1[0].length;B++)
+            {
+                if(A===B)
+                {
+                    Lower[A][A] = 1;
+                }
+                else
+                {
+                    let sum:number = 0;
+                    for(let C:number=0;C<A;C++)
+                    {
+                        sum+= (Lower[B][C]*Upper[C][A]);
+                    }
+                    Lower[B][A] = (this.Met1[B][A] - sum )/Upper[A][A];
+                }
+            }
+        }
+        for(let i =0;i<this.Met1.length;i++)
+        {
+            let sum =0;
+            for(let j= 0;j<this.Met1[0].length;j++)
+            {
+                if(j!==i)
+                {
+                    sum+=Lower[i][j]*Y[j];
+                }
+            }
+            Y[i]=(this.Met2[i]-sum)/Lower[i][i];
+        }
+        for(let i =this.Met1.length-1;i>=0;i--)
+        {
+            let sum =0;
+            for(let j= 0;j<this.Met1[0].length;j++)
+            {
+                if(j!==i)
+                {
+                    sum+=Upper[i][j]*X[j];
+                }
+            }
+            X[i]=parseFloat(((Y[i]-sum)/Upper[i][i]).toPrecision(15));
+        }
+        return [X,Loop_Result,Loop_Error]
     }
 }

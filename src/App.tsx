@@ -84,7 +84,6 @@ class App extends React.Component<IProps,IState>
           Authorization: 'Bearer ' + this.state.Token 
         }
     }).then((res)=>{
-        console.log(res.data)
         this.setState({Header:res.data.Header},()=>{
           axios.get<ServerResponse_SubHeader>("http://localhost:6061/SubHeader",{
             headers:{

@@ -56,7 +56,7 @@ class Unit1Chart extends React.Component<Iprops,Istate>
                 if(this.props.Q.length>0)
                 {
                     let Data2:Array<length> = []
-                    for(let i:number=floor(this.props.loop_result[this.props.Loop_Error.length-1]-150);i<=(this.props.Loop_Error.length-1)+150;i+=1)
+                    for(let i:number=floor(this.props.loop_result[this.props.Loop_Error.length-1]-200);i<=(this.props.Loop_Error.length-1)+200;i+=1)
                     {
                         let Subdata:length = 
                         {
@@ -82,6 +82,7 @@ class Unit1Chart extends React.Component<Iprops,Istate>
                     }
                     Data.push(SubData)
                 }
+                console.log(Data)
                 this.setState({Data:Data})
             }
         }
