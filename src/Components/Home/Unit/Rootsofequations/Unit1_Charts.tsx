@@ -1,5 +1,5 @@
 import React from "react";
-import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, LineChart, Line, Brush, ReferenceLine} from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, Brush, ReferenceLine} from 'recharts';
 import * as math from "mathjs"
 import { ceil, floor } from "mathjs";
 interface Result_Data

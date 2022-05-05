@@ -17,11 +17,8 @@ import { Button, FormControl, Table } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { maxWidth } from "@mui/system";
 import { Cal_LinearRegression ,Cal_PolynomialRegression ,Cal_MultipleLinearRegression} from "./Unit4_code";
 //-----//
 
@@ -123,7 +120,7 @@ class Unit3 extends React.Component<Iprops,Istate>
     }
     Get_Result = () =>
     {
-        let Result:any,Loop_Result:any,Loop_Error:any;
+        let Result:any;
         switch (this.state.SubHeader)
         {
           case "LinearRegression":

@@ -372,7 +372,6 @@ export class Cal_LUdecomposition
     }
     public Result()
     {
-        let Result:Array<number> = [];
         let Loop_Result:Array<number> = [];
         let Loop_Error:Array<number> = [];
         let Lower:Array<Array<number>> = Array(this.Met1.length).fill(0).map(x=>Array(this.Met1[0].length).fill(0));

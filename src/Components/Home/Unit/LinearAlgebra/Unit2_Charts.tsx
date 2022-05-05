@@ -1,5 +1,5 @@
 import React from "react";
-import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, LineChart, Line, Brush} from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, Brush} from 'recharts';
 interface Result_Data
 {
     name:String,

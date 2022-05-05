@@ -785,7 +785,6 @@ class Unit2 extends React.Component<Iprops,Istate>
     get_custom_param = () =>
     {
         let result:Array<any> = [] 
-        let X:number = parseInt(this.state.dimensionX)
         let Y:number = parseInt(this.state.dimensionY)
         for(let i:number = 0;i<Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list]).length;i++)
         {
@@ -996,7 +995,6 @@ class Unit2 extends React.Component<Iprops,Istate>
     }
     setInputMetrix_Y = ()=>
     {
-        let X:number = parseInt(this.state.dimensionX)
         let Y:number = parseInt(this.state.dimensionY)
         if(this.state.Cerrent_Question1.toString()!==""&&this.state.Cerrent_Question2.toString()!==""){
             if(this.state.dimensionY===this.state.Cerrent_Question1.length.toString() && this.state.dimensionX === this.state.Cerrent_Question1[0].length.toString() && this.state.dimensionY === this.state.Cerrent_Question2.length.toString())
