@@ -104,7 +104,7 @@ class App extends React.Component<IProps,IState>
       for (let i : number = 0;i<this.state.Header.length;i++)
       {
         result.push(
-          <SubMenu title = {this.state.Header[i].toString()} key = {i.toString()}>
+          <SubMenu title = {this.state.Header[i].toString()} key = {i.toString()} style= {{fontSize:"20px"}}>
             {this.get_Subheader_Menu(i)}
           </SubMenu>
         )
@@ -120,7 +120,8 @@ class App extends React.Component<IProps,IState>
       for (let i : number = 0;i<this.state.SubHeader[num].length;i++)
       {
         result.push(
-          <MenuItem key={num.toString()+"_"+i.toString()}>{this.state.SubHeader[num][i]}
+          <MenuItem key={num.toString()+"_"+i.toString()} style={{fontSize:"18px"}}>
+            {this.state.SubHeader[num][i]}
             <Link to={"/"+(this.state.Header[num]).toString()+"/"+this.state.SubHeader[num][i]}/>
           </MenuItem>
         )
@@ -145,7 +146,7 @@ class App extends React.Component<IProps,IState>
           </div>
           <ProSidebar collapsed = {this.state.collapsed}> 
             <Menu>
-              <MenuItem key={"HOME"}>HOME
+              <MenuItem key={"HOME"} style={{fontSize:"20px"}}>HOME
                 <Link to = {"/"}/>
               </MenuItem>
               {this.get_Header_Menu()}

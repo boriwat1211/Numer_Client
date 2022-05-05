@@ -10,7 +10,8 @@
     "Header": [
       "Rootsofequations",
       "LinearAlgebra",
-      "InterpolationTechniques"
+      "InterpolationTechniques",
+      "LeastSquaresRegression"
     ]
   },
   "SubHeader": {
@@ -33,7 +34,13 @@
       ],
       [
         "NewtonDividedDifference",
-        "LagrangeInterpolation"
+        "LagrangeInterpolation",
+        "SplineInterpolation"
+      ],
+      [
+        "LinearRegression",
+        "PolynomialRegression",
+        "MultipleLinearRegression"
       ]
     ]
   },
@@ -87,7 +94,7 @@
       "Question1": [
         "[[5,2,0,0],[2,5,2,0],[0,2,5,2],[0,0,2,5]]",
         "[[-2,3,1],[3,4,-5],[1,-2,1]]",
-        "[[4,-4,0],[-1,4,-2],[0,-2,4]]   "
+        "[[4,-4,0],[-1,4,-2],[0,-2,4]]"
       ],
       "Question2": [
         "[12,17,14,7]",
@@ -203,7 +210,7 @@
       ],
       "Point": [
         "[1,2,3,4,5]",
-        "[1,2,3]"
+        "[1,2]"
       ]
     },
     {
@@ -229,6 +236,73 @@
         "[1,2,3,4,5,6]",
         "[1,2,3,4,5]",
         "[1,2,3]"
+      ]
+    },
+    {
+      "id": "SplineInterpolation",
+      "Name": "Spline Interpolation",
+      "Context": "1. จงเเก้ระบบสมการต่อไปนี้",
+      "Question": [
+        "250",
+        "42000",
+        "3.2"
+      ],
+      "Question1": [
+        "[-100,0,100,200,300,400]",
+        "[0,20000,40000,60000,80000]",
+        "[2,3,4]"
+      ],
+      "Question2": [
+        "[215,202,206,215,228,249]",
+        "[9.81,9.7487,9.6879,9.6879,9.5682]",
+        "[0.2239,-0.2601,-0.3971]"
+      ],
+      "Point": [
+        "[1,2,3,4,5,6]",
+        "[1,2,3,4,5]",
+        "[1,2,3]"
+      ]
+    },
+    {
+      "id": "LinearRegression",
+      "Name": "Linear Regression",
+      "Context": "1. จงเเก้ระบบสมการต่อไปนี้",
+      "Question": [
+        "[65]"
+      ],
+      "Question1": [
+        "[[10,15,20,30,40,50,60,70,80]]"
+      ],
+      "Question2": [
+        "[5,9,15,18,22,30,35,38,43]"
+      ]
+    },
+    {
+      "id": "PolynomialRegression",
+      "Name": "Polynomial Regression",
+      "Context": "1. จงเเก้ระบบสมการต่อไปนี้",
+      "Question": [
+        "[2]"
+      ],
+      "Question1": [
+        "[[10,15,20,30,40,50,60,70,80]]"
+      ],
+      "Question2": [
+        "[5,9,15,18,22,30,35,38,43]"
+      ]
+    },
+    {
+      "id": "MultipleLinearRegression",
+      "Name": "MultipleLinearRegression",
+      "Context": "1. จงเเก้ระบบสมการต่อไปนี้",
+      "Question": [
+        "[2,3,4]"
+      ],
+      "Question1": [
+        "[[1,0,2,3,4,2,1],[0,1,4,2,1,3,6],[1,3,1,2,5,3,4]]"
+      ],
+      "Question2": [
+        "[4,-5,-6,0,-1,-7,-20]"
       ]
     }
   ]

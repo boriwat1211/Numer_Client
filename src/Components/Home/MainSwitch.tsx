@@ -1,6 +1,7 @@
 import React from "react"
 import withRouter from "./Custom_HOC"
 import Unit3 from "./Unit/Interpolation/Unit3"
+import Unit4 from "./Unit/LeastSquare/Unit4"
 import Unit2 from "./Unit/LinearAlgebra/Unit2"
 import Unit1 from "./Unit/Rootsofequations/Unit1"
 interface Iprops
@@ -59,6 +60,14 @@ class MainSwitch extends React.Component<Iprops,Istate>
                 return(
                     <div>
                         <Unit3 Token={this.props.Token}
+                               Header={this.state.Header}
+                               SubHeader={this.state.SubHeader}/>
+                    </div>
+                )
+            case "LeastSquaresRegression":
+                return(
+                    <div>
+                        <Unit4 Token={this.props.Token}
                                Header={this.state.Header}
                                SubHeader={this.state.SubHeader}/>
                     </div>

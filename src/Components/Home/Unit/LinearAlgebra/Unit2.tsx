@@ -370,16 +370,24 @@ class Unit2 extends React.Component<Iprops,Istate>
         }
         else if(e.target.name === "dimensionX")
         {
-            if(e.target.value.toString()!=="0")
+            if (e.target.value==="")
             {
-                this.setState({dimensionX:e.target.value.toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
+                this.setState({dimensionX:(0).toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
+            }
+            else if(e.target.value.toString()!=="0")
+            {
+                this.setState({dimensionX:parseInt(e.target.value).toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
             }
         }
         else if(e.target.name === "dimensionY")
         {
-            if(e.target.value !=="0")
+            if (e.target.value==="")
             {
-                this.setState({dimensionY:e.target.value.toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
+                this.setState({dimensionY:(0).toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
+            }
+            else if(e.target.value !=="0")
+            {
+                this.setState({dimensionY:parseInt(e.target.value).toString()},()=>this.reset_dimenstion(this.state.dimensionX,this.state.dimensionY))
             }
         }
         else if(check1.test(e.target.name))
@@ -968,6 +976,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                         // console.log(i,j)
                         temp2.push(
                             <TextField 
+                                style={{"width":"100px"}}
                                 disabled = {(!this.state.Custom_Para)}
                                 type="text" 
                                 key={`${i}${j}`}
@@ -1091,7 +1100,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                         <label>
                         dimensionX :{" "}
                             <TextField 
-                                label="Custom Question" 
+                                label="dimensionX" 
                                 variant="outlined" 
                                 margin="normal"
                                 disabled = {(!this.state.Custom_Para)}
@@ -1105,7 +1114,7 @@ class Unit2 extends React.Component<Iprops,Istate>
                         <label>
                         dimensionY :{" "}
                             <TextField 
-                                label="Custom Question" 
+                                label="dimensionY" 
                                 variant="outlined" 
                                 margin="normal"
                                 disabled = {(!this.state.Custom_Para)}
@@ -1148,6 +1157,28 @@ class Unit2 extends React.Component<Iprops,Istate>
                         <MathJaxContext>
                             <h2>Result: {this.showResult()}</h2>
                         </MathJaxContext>
+                    </div>
+                    <div>
+                        <h2>test Result</h2>
+                    </div>
+                    <div style={{display: "flex"}}>
+                        <MathJaxContext>
+                            <h2>{this.showEquation1()}</h2>
+                        </MathJaxContext>
+                        <h1>X</h1>
+                        <MathJaxContext>
+                            <h2>{this.showResult()}</h2>
+                        </MathJaxContext>
+                        <h1>=</h1>
+                        {this.state.Result.length!==0&&this.state.Cerrent_Question1[0].length===this.state.Result.length&&
+                            <MathJaxContext>
+                                <h2>
+                                    <MathJax dynamic inline >
+                                        {"\\("+math.parse("["+math.multiply(this.state.Cerrent_Question1,this.state.Result)+"]").toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}
+                                    </MathJax>
+                                </h2>
+                            </MathJaxContext>
+                        }
                     </div>
                     <div>
                         {/* <Charts loop_result_L={this.state.LoopResult} Unit={this.state.Header} loop_result_R={[]} Loop_Error_L={this.state.LoopError} Loop_Error_R={[]} L={[]} R={[]}/> */}

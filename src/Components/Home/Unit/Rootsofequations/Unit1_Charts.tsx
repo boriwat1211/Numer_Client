@@ -1,7 +1,7 @@
 import React from "react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, LineChart, Line, Brush, ReferenceLine} from 'recharts';
 import * as math from "mathjs"
-import { floor } from "mathjs";
+import { ceil, floor } from "mathjs";
 interface Result_Data
 {
     name:String,
@@ -56,7 +56,7 @@ class Unit1Chart extends React.Component<Iprops,Istate>
                 if(this.props.Q.length>0)
                 {
                     let Data2:Array<length> = []
-                    for(let i:number=floor(this.props.loop_result[this.props.Loop_Error.length-1]-200);i<=(this.props.Loop_Error.length-1)+200;i+=1)
+                    for(let i:number=floor(this.props.loop_result[this.props.Loop_Error.length-1]-500);i<=(this.props.Loop_Error.length-1)+500;i+=1)
                     {
                         let Subdata:length = 
                         {
@@ -82,7 +82,43 @@ class Unit1Chart extends React.Component<Iprops,Istate>
                     }
                     Data.push(SubData)
                 }
-                console.log(Data)
+                this.setState({Data:Data})
+            }
+        }
+        else if(this.props.Unit === "OnePointIteration")
+        {
+            if(this.props.loop_result.length > 0&&this.props.Loop_Error.length>0 && this.props.Loop_Error.length===this.props.loop_result.length)
+            {
+                if(this.props.Q.length>0)
+                {
+                    let Data2:Array<length> = []
+                    console.log("("+this.props.Q+")-x");
+                    for(let i:number=floor(this.props.loop_result[this.props.Loop_Error.length-1]-150);i<=(this.props.Loop_Error.length-1)+150;i+=1)
+                    {
+                        let Subdata:length = 
+                        {
+                            name:i.toString(),
+                            Result:math.evaluate("("+this.props.Q+")-x",{x:i}),
+                            ResultLine:0
+                        }
+                        Data2.push(Subdata);
+                    }
+                    this.setState({Data2:Data2})
+                }
+                let Data:Array<Result_Data> = []
+                for(let i:number = 0;i<this.props.loop_result.length;i++)
+                {
+                    let SubData:Result_Data = 
+                    {
+                        name:i.toString(),
+                        Loop_Result:this.props.loop_result[i],
+                        Error_Result:this.props.Loop_Error[i],
+                        ResutlofEquation:math.evaluate(this.props.Q,{x:this.props.loop_result[i]}),
+                        XL:this.props.L[i],
+                        XR:this.props.R[i]
+                    }
+                    Data.push(SubData)
+                }
                 this.setState({Data:Data})
             }
         }
@@ -163,23 +199,25 @@ class Unit1Chart extends React.Component<Iprops,Istate>
                                 }}
                                 >
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
+                                <XAxis dataKey="name"/>
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
                                 <ReferenceLine x={floor(this.props.L[0]).toString()} stroke="red" label="XL" />
-                                <ReferenceLine x={floor(this.props.R[0]).toString()} stroke="red" label="XR" />
+                                <ReferenceLine x={ceil(this.props.R[0]).toString()} stroke="red" label="XR" />
                                 <Line
                                     type="monotone"
                                     dataKey="Result"
                                     stroke="#FF5B5E"
                                     strokeWidth={5}
+                                    dot={false} 
                                     activeDot={{ r: 5}} />
                                     <Line
                                     type="monotone"
                                     dataKey="ResultLine"
                                     stroke="#82ca9d"
-                                    strokeWidth={5}                                
+                                    strokeWidth={5}
+                                    dot={false}                            
                                     activeDot={{ r: 5}} />
                                 <Brush height={60} stroke={"#39b6ff"}/>
                             </LineChart>

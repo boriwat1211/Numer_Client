@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
 .Main
 {
+    font-family: 'Mali', cursive;
     display: flex;
     position: relative;
     min-width: 100vw;

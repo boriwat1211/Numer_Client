@@ -1,17 +1,6 @@
 class Cal_ALL
 {
-    public static Mem:Array<Array<number>> = [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-    ]
+    public static Mem:Array<Array<number>> = Array.from(Array(100),()=>Array(100).fill(0));
     public static Result(x:Array<number>,y:Array<number>,x_cal:number,point:Array<number>,count1:number,count2:number):number
     { 
         if(count1-count2 === 0)
@@ -30,19 +19,7 @@ class Cal_ALL
     }
     public static reset()
     {
-        this.Mem =
-        [
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0],
-        ]
+        this.Mem = Array.from(Array(100),()=>Array(100).fill(0));
     }
 }
 export class Cal_NewtonDividedDifference
@@ -57,7 +34,6 @@ export class Cal_NewtonDividedDifference
         this.Y = JSON.parse(JSON.stringify(y));
         this.X_CAL = parseFloat(x_cal);
         this.Point = JSON.parse("["+point+"]");
-        console.log(this.Point)
         for(let i:number =0;i<this.Point.length;i++) this.Point[i]-=1
     }
     public Result():number
@@ -104,9 +80,12 @@ export class Cal_LagrangeInterpolation
                     temp2 *= (this.X[this.Point[j]]-this.X[this.Point[i]])
                 }
             }
-            console.log(this.Y[this.Point[i]]*(temp1/temp2))
             result+= this.Y[this.Point[i]]*(temp1/temp2);
         }
         return result;
     }
+}
+export class Cal_SplineInterpolation
+{
+    
 }

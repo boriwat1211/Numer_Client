@@ -2,7 +2,6 @@ import axios from "axios";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import React, { ChangeEvent } from "react";
 import * as math from 'mathjs'
-import { Cal_LagrangeInterpolation, Cal_NewtonDividedDifference } from "./Unit3_code";
 
 
 
@@ -23,27 +22,27 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { maxWidth } from "@mui/system";
+import { Cal_LinearRegression ,Cal_PolynomialRegression ,Cal_MultipleLinearRegression} from "./Unit4_code";
 //-----//
 
 
-
-interface NewtonDividedDifference
+interface LinearRegression
 {
 
 }
-interface LagrangeInterpolation
+interface PolynomialRegression
 {
 
 }
-interface SplineInterpolation
+interface MultipleLinearRegression
 {
 
 }
 interface Cutom_list
 {
-    NewtonDividedDifference:NewtonDividedDifference,
-    LagrangeInterpolation:LagrangeInterpolation,
-    SplineInterpolation:SplineInterpolation
+   LinearRegression:LinearRegression,
+   PolynomialRegression:PolynomialRegression,
+   MultipleLinearRegression:MultipleLinearRegression
 }
 interface ServerResponse_Data
 {
@@ -52,7 +51,6 @@ interface ServerResponse_Data
     Question:Array<string>
     Question1:Array<String>
     Question2:Array<String>
-    Point:Array<String>
 }
 interface Iprops
 {
@@ -68,20 +66,19 @@ interface Istate
         Question:Array<string>
         Question1:Array<String>,
         Question2:Array<String>,
-        Point:Array<String>
     },
     Header:String,
     SubHeader:String,
     Result:Number,
     Custom_Para:boolean,
     Current_Question:string,
-    Cerrent_Question1:Array<number>,
+    Cerrent_Question1:Array<Array<number>>,
     Cerrent_Question2:Array<number>,
     Custom_Para_list:Cutom_list,
     Check_code:boolean,
-    Point:string,
     dimensionX:number,
-    PointChecker:Array<boolean>
+    Linenumber:number,
+    EnableMutiline:boolean,
 }
 class Unit3 extends React.Component<Iprops,Istate>
 {
@@ -89,16 +86,13 @@ class Unit3 extends React.Component<Iprops,Istate>
     {
         super(props);
         const custom_param:Cutom_list = {
-            NewtonDividedDifference:
-            {
+            LinearRegression:{
 
             },
-            LagrangeInterpolation:
-            {
+            PolynomialRegression:{
 
             },
-            SplineInterpolation:
-            {
+            MultipleLinearRegression:{
 
             }
         }
@@ -109,8 +103,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                 Context:" ",
                 Question:[],
                 Question1:[],
-                Question2:[],
-                Point:[]
+                Question2:[]
             },
             Header:this.props.Header,
             SubHeader:this.props.SubHeader,
@@ -121,10 +114,11 @@ class Unit3 extends React.Component<Iprops,Istate>
             Cerrent_Question2:[],
             Custom_Para_list:custom_param,
             Check_code:false,
-            Point:"",
             dimensionX:0,
-            PointChecker:[]
+            Linenumber:0,
+            EnableMutiline:(this.props.SubHeader === "MultipleLinearRegression")?true:false,
         }
+        console.log(this.state.EnableMutiline)
         this.get_Data()
     }
     Get_Result = () =>
@@ -132,18 +126,21 @@ class Unit3 extends React.Component<Iprops,Istate>
         let Result:any,Loop_Result:any,Loop_Error:any;
         switch (this.state.SubHeader)
         {
-            case "NewtonDividedDifference":
-                let LinearInterpolation:Cal_NewtonDividedDifference = new Cal_NewtonDividedDifference(this.state.Cerrent_Question1,this.state.Cerrent_Question2,this.state.Current_Question,this.state.Point)
-                Result = LinearInterpolation.Result()
-                this.setState({Result:Result})
-                break;
-            case "LagrangeInterpolation":
-                let LagrangeInterpolation:Cal_LagrangeInterpolation = new Cal_LagrangeInterpolation(this.state.Cerrent_Question1,this.state.Cerrent_Question2,this.state.Current_Question,this.state.Point)
-                Result = LagrangeInterpolation.Result()
-                this.setState({Result:Result})
-                break;
-            case "SplineInterpolation":
-                break;
+          case "LinearRegression":
+            let LinearInterpolation:Cal_LinearRegression = new Cal_LinearRegression(this.state.Cerrent_Question1[0],this.state.Cerrent_Question2,this.state.Current_Question)
+            Result = LinearInterpolation.Result()
+            this.setState({Result:Result})
+            break;
+        case "PolynomialRegression":
+            let PolynomialRegression:Cal_PolynomialRegression = new Cal_PolynomialRegression(this.state.Cerrent_Question1[0],this.state.Cerrent_Question2,this.state.Current_Question)
+            Result = PolynomialRegression.Result()
+            this.setState({Result:Result})
+            break;
+        case "MultipleLinearRegression":
+            let MultipleLinearRegression:Cal_MultipleLinearRegression = new Cal_MultipleLinearRegression(this.state.Cerrent_Question1,this.state.Cerrent_Question2,this.state.Current_Question)
+            Result = MultipleLinearRegression.Result()
+            this.setState({Result:Result})
+            break;
         }
     }
     get_Data = () =>
@@ -159,48 +156,41 @@ class Unit3 extends React.Component<Iprops,Istate>
                 Question:res.data.Question,
                 Question1:res.data.Question1,
                 Question2:res.data.Question2,
-                Point:res.data.Point
             }
             this.setState({Data:Data},()=>{this.setState({Cerrent_Question1:JSON.parse(this.state.Data.Question1[0].toString().replace(/\r/g,""))},()=>{
                 this.setState({Cerrent_Question2:JSON.parse(this.state.Data.Question2[0].toString().replace(/\r/g,""))},()=>{
-                    this.setState({Point:JSON.parse(this.state.Data.Point[0].toString().replace(/\r/g,"")).toString()},()=>{
-                    this.setState({Current_Question:this.state.Data.Question[0].toString().replace(/\r/g,"")},()=>{
-                        this.setState({dimensionX:this.state.Cerrent_Question1.length},()=>{
-                            const data = new Array((this.state.dimensionX)).fill(false);
-                            for(const i of JSON.parse("["+this.state.Point+"]"))
-                            {
-                                data[parseInt(i)-1] = true;
-                            }
-                            this.setState({PointChecker:data},()=>this.Get_Result())
+                    this.setState({Current_Question:JSON.parse(this.state.Data.Question[0].toString().replace(/\r/g,"")).toString()},()=>{
+                        this.setState({dimensionX:this.state.Cerrent_Question1[0].length},()=>{
+                            this.setState({Linenumber:this.state.Cerrent_Question1.length},()=>this.Get_Result())
                         })
                     })
                 })})
-            })})
-        }) 
+            })
+        })
     }
     reset_para = () =>
     {
         const custom_param:Cutom_list = {
-            NewtonDividedDifference:
+            LinearRegression:
             {
      
             },
-            LagrangeInterpolation:
+            PolynomialRegression:
             {
 
             },
-            SplineInterpolation:
-            {
+            MultipleLinearRegression:{
 
             }
         }
-        this.setState({Custom_Para:false,Cerrent_Question1:[],Cerrent_Question2:[],Result:0,Custom_Para_list:custom_param,PointChecker:[]},()=>this.get_Data())
+        this.setState({Custom_Para:false,Cerrent_Question1:[],Cerrent_Question2:[],Result:0,Custom_Para_list:custom_param},()=>this.get_Data())
     }
     componentDidUpdate = () =>
     {
         if(this.state.Header!==this.props.Header || this.state.SubHeader!==this.props.SubHeader)
         {
             this.setState({Header:this.props.Header})
+            this.setState({EnableMutiline:(this.props.SubHeader === "MultipleLinearRegression")?true:false})
             this.setState({SubHeader:this.props.SubHeader},()=>this.reset_para())
         }
         return null;
@@ -218,30 +208,31 @@ class Unit3 extends React.Component<Iprops,Istate>
     }
     handelQuestion = (e:ChangeEvent<HTMLInputElement>) =>
     {
-        let X:RegExp = new RegExp("X[0-9]+");
+        let X:RegExp = new RegExp("X[0-9]+-[0-9]+");
         let Y:RegExp = new RegExp("Y[0-9]+")
         let float_C:RegExp = new RegExp("^-?[0-9]*\\.?[0-9]*$");
         let minus:RegExp = new RegExp("^[0-9]*\\.?[0-9]*-$");
         let addfloat:RegExp = new RegExp("^-?[0-9]*\\.?[0-9]*\\+");
         if(X.test(e.target.name))
         {
-            let temp:Array<number> = this.state.Cerrent_Question1;
+            let temp:Array<Array<number>> = this.state.Cerrent_Question1;
+            console.log(parseInt(e.target.name.split("X")[1].split("-")[0]),parseInt(e.target.name.split("X")[1].split("-")[1]))
             if(e.target.value===""||e.target.value==="-")
             {
-                temp[parseInt(e.target.name.split("X")[1])] = 0;
+                temp[parseInt(e.target.name.split("X")[1].split("-")[0])][parseInt(e.target.name.split("X")[1].split("-")[1])] = 0;
             }
             else if(minus.test(e.target.value))
             {
-                temp[parseInt(e.target.name.split("X")[1])] = parseFloat("-"+e.target.value);
+                temp[parseInt(e.target.name.split("X")[1].split("-")[0])][parseInt(e.target.name.split("X")[1].split("-")[1])] = parseFloat("-"+e.target.value);
             }
             else if(addfloat.test(e.target.value))
             {
                 let value:string=parseFloat((parseFloat(e.target.value)+0.1).toString()).toPrecision(15);
-                temp[parseInt(e.target.name.split("X")[1])] = parseFloat(value);
+                temp[parseInt(e.target.name.split("X")[1].split("-")[0])][parseInt(e.target.name.split("X")[1].split("-")[1])] = parseFloat(value);
             }
             else if(float_C.test(e.target.value))
             {
-                temp[parseInt(e.target.name.split("X")[1])] = parseFloat(e.target.value);
+                temp[parseInt(e.target.name.split("X")[1].split("-")[0])][parseInt(e.target.name.split("X")[1].split("-")[1])] = parseFloat(e.target.value);
             }
             this.setState({Cerrent_Question1:temp})
         }
@@ -278,13 +269,20 @@ class Unit3 extends React.Component<Iprops,Istate>
                 this.setState({dimensionX:parseInt(e.target.value)},()=>{this.resetdimension()})
             }
         }
+        else if(e.target.name === "Linenumber")
+        {
+            if (e.target.value==="")
+            {
+                this.setState({Linenumber:0},()=>{this.resetdimension()});
+            }
+            else if(e.target.value!=="0")
+            {
+                this.setState({Linenumber:parseInt(e.target.value)},()=>{this.resetdimension()})
+            }
+        }
         else if(e.target.name === "Question")
         {
             this.setState({Current_Question:e.target.value.toString()})
-        }
-        else if(e.target.name === "Point")
-        {
-            this.setState({Point:e.target.value.toString()})
         }
         else
         {
@@ -295,10 +293,7 @@ class Unit3 extends React.Component<Iprops,Istate>
     {
         if(this.state.dimensionX>0)
         {
-            this.setState({Cerrent_Question1:new Array(this.state.dimensionX).fill(0)},()=>this.setState({Cerrent_Question2:new Array(this.state.dimensionX).fill(0)},()=>
-            {   
-                this.setState({PointChecker:new Array(this.state.dimensionX).fill(false)})
-            }))
+            this.setState({Cerrent_Question1: Array.from(Array(this.state.Linenumber),()=>Array(this.state.dimensionX).fill(0))},()=>this.setState({Cerrent_Question2:new Array(this.state.dimensionX).fill(0)}))
         }
     }
     handelResult = (e:React.MouseEvent<HTMLButtonElement>) =>
@@ -310,8 +305,8 @@ class Unit3 extends React.Component<Iprops,Istate>
             {
                 switch (this.state.SubHeader)
                 {
-                    case "NewtonDividedDifference":
-                        if(Object.values(this.state.Custom_Para_list.NewtonDividedDifference).includes(""))
+                    case "LinearRegression":
+                        if(Object.values(this.state.Custom_Para_list.LinearRegression).includes(""))
                         {
                             alert("Enter all inputs!!")
                         }
@@ -320,8 +315,8 @@ class Unit3 extends React.Component<Iprops,Istate>
                             this.Get_Result()
                         }
                         break;
-                    case "LagrangeInterpolation":
-                        if(Object.values(this.state.Custom_Para_list.LagrangeInterpolation).includes(""))
+                    case "PolynomialRegression":
+                        if(Object.values(this.state.Custom_Para_list.PolynomialRegression).includes(""))
                         {
                             alert("Enter all inputs!!")
                         }
@@ -330,8 +325,8 @@ class Unit3 extends React.Component<Iprops,Istate>
                             this.Get_Result()
                         }
                         break;
-                    case "PolynomialInterpolation":
-                        if(Object.values(this.state.Custom_Para_list.SplineInterpolation).includes(""))
+                    case "MultipleLinearRegression":
+                        if(Object.values(this.state.Custom_Para_list.PolynomialRegression).includes(""))
                         {
                             alert("Enter all inputs!!")
                         }
@@ -390,17 +385,12 @@ class Unit3 extends React.Component<Iprops,Istate>
                 break
             }
         }
-        this.setState({Cerrent_Question1:JSON.parse(this.state.Data.Question1[i].toString().replace(/\r/g,""))},()=>this.setState({Cerrent_Question2:JSON.parse(this.state.Data.Question2[i].toString().replace(/\r/g,""))},()=>{this.setState({Point:JSON.parse(this.state.Data.Point[i].toString().replace(/\r/g,"")).toString()},()=>{
-            this.setState({Current_Question:this.state.Data.Question[i].toString().replace(/\r/g,"")},()=>{
-                this.setState({dimensionX:JSON.parse(this.state.Data.Question1[i].toString()).length},()=>{
-                    const data = new Array((this.state.dimensionX)).fill(false);
-                    for(const i of JSON.parse("["+this.state.Point+"]"))
-                    {
-                        data[parseInt(i)-1] = true;
-                    }
-                    this.setState({PointChecker:data},()=>this.Get_Result());
-                })})
-        })}))
+        console.log(this.state.Data.Question1[i].length)
+        this.setState({Cerrent_Question1:JSON.parse(this.state.Data.Question1[i].toString().replace(/\r/g,""))},()=>this.setState({Cerrent_Question2:JSON.parse(this.state.Data.Question2[i].toString().replace(/\r/g,""))},
+         ()=>{this.setState({Current_Question:JSON.parse(this.state.Data.Question[0].toString().replace(/\r/g,"")).toString()},
+            ()=>{this.setState({dimensionX:JSON.parse(this.state.Data.Question1[i].toString())[0].length},
+                ()=>this.setState({Linenumber:JSON.parse(this.state.Data.Question1[i].toString()).length},()=>this.Get_Result()))})
+        }))
     }
     get_custom_param = () =>
     {
@@ -409,54 +399,7 @@ class Unit3 extends React.Component<Iprops,Istate>
         {
             switch (this.state.SubHeader)
             {
-                case "NewtonDividedDifference":
-                    result.push(
-                        <label key={i.toString()}>
-                            {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
-                                key={i.toString()}
-                                disabled = {(!this.state.Custom_Para)}
-                                type="number" 
-                                value={this.state.Custom_Para_list.NewtonDividedDifference[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof NewtonDividedDifference]}
-                                name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
-                                onChange={this.handelCustom}
-                            >
-                            </input>
-                        </label>
-                    )
-                    break;
-                case "LagrangeInterpolation":
-                    result.push(
-                        <label key={i.toString()}>
-                            {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
-                                key={i.toString()}
-                                disabled = {(!this.state.Custom_Para)}
-                                type="number" 
-                                value={this.state.Custom_Para_list.LagrangeInterpolation[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof LagrangeInterpolation]}
-                                name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
-                                onChange={this.handelCustom}
-                            >
-                            </input>
-                        </label>
-                    )
-                    break;
-                case "PolynomialInterpolation":
-                    result.push(
-                        <label key={i.toString()}>
-                            {Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}:{" "}
-                            <input 
-                                key={i.toString()}
-                                disabled = {(!this.state.Custom_Para)}
-                                type="number" 
-                                value={this.state.Custom_Para_list.SplineInterpolation[Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i] as keyof SplineInterpolation]}
-                                name={Object.keys(this.state.Custom_Para_list[this.state.SubHeader as keyof Cutom_list])[i]}
-                                onChange={this.handelCustom}
-                            >
-                            </input>
-                        </label>
-                    )
-                    break;
+                
             }
         }
         return result
@@ -507,28 +450,32 @@ class Unit3 extends React.Component<Iprops,Istate>
             )
         }
     }
-    onCheckPoint = (event: React.ChangeEvent<HTMLInputElement>) =>
+    getTableX =(count:number)=>
     {
-        let data = this.state.PointChecker;
-        data[parseInt(event.target.name)] = event.target.checked;
-        this.setState({PointChecker:data},()=>
+        let result:Array<any> =[];
+        for(let i =0;i<this.state.Linenumber;i++)
         {
-            let result = "";
-            for(let i = 0;i<this.state.PointChecker.length;i++)
-            {
-                if(this.state.PointChecker[i])
-                {
-                    result+=(i+1).toString();
-                    result+=",";
-                }
-            }
-            this.setState({Point:result.slice(0,-1)})
-        });  
+            result.push(
+                <TableCell key={`${i}${count}`}>
+                    <TextField 
+                        fullWidth
+                        disabled = {(!this.state.Custom_Para)}
+                        type = "text"
+                        key={`${i}${count}`}
+                        name={`X${i}-${count}`}
+                        value={this.state.Cerrent_Question1[i][count]}
+                        onChange={this.handelQuestion}
+                    >
+                    </TextField>
+                </TableCell>
+            )
+        }
+        return result
     }
     getTable =()=>
     {
         let result:Array<any> = [];
-        if( this.state.PointChecker.length === this.state.dimensionX && this.state.PointChecker.length >0 && this.state.dimensionX>0 && this.state.Cerrent_Question1.length === this.state.dimensionX && this.state.Cerrent_Question2.length === this.state.dimensionX)
+        if(this.state.dimensionX>0 &&this.state.Linenumber>0 && this.state.Cerrent_Question1.length === this.state.Linenumber && this.state.Cerrent_Question1[0].length === this.state.dimensionX && this.state.Cerrent_Question2.length === this.state.dimensionX)
         {
             for(let i:number = 0;i<this.state.dimensionX;i++)
             {
@@ -536,26 +483,8 @@ class Unit3 extends React.Component<Iprops,Istate>
                     <TableRow key={i.toString()}>
                         <TableCell key={i.toString()} align="center">
                             {i+1}
-                            <Checkbox
-                                key={i.toString()}
-                                disabled = {!this.state.Custom_Para}
-                                name={`${i}`}
-                                checked = {this.state.PointChecker[i]}
-                                onChange ={this.onCheckPoint}
-                            />
                         </TableCell>
-                        <TableCell>
-                            <TextField 
-                                fullWidth
-                                disabled = {(!this.state.Custom_Para)}
-                                type = "text"
-                                key={`${i}`}
-                                name={`X${i}`}
-                                value={this.state.Cerrent_Question1[i]}
-                                onChange={this.handelQuestion}
-                            >
-                            </TextField>
-                        </TableCell>
+                        {this.getTableX(i)}
                         <TableCell>
                             <TextField 
                                 fullWidth
@@ -573,6 +502,20 @@ class Unit3 extends React.Component<Iprops,Istate>
             }
         }
         return result;
+    }
+    getHeaderX=()=>
+    {
+        let result:Array<any> = [];
+        if(this.state.dimensionX>0 &&this.state.Linenumber>0 && this.state.Cerrent_Question1.length === this.state.Linenumber && this.state.Cerrent_Question1[0].length === this.state.dimensionX && this.state.Cerrent_Question2.length === this.state.dimensionX)
+        {
+            for(let i =0;i<this.state.Linenumber;i++)
+            {
+                result.push(
+                    <TableCell align="center" key={i} sx={{color:"white",fontSize:"20px"}}>{`X${i+1}`}</TableCell>
+                )
+            }
+        }
+        return result
     }
     render()
     {
@@ -621,6 +564,17 @@ class Unit3 extends React.Component<Iprops,Istate>
                     </div>
                     <div>
                         <TextField
+                            label="Line Number"
+                            variant="outlined" 
+                            margin="normal"
+                            disabled = {(!this.state.EnableMutiline)||(!this.state.Custom_Para)}
+                            type = "text"
+                            name="Linenumber"
+                            value={this.state.Linenumber}
+                            onChange={this.handelQuestion}
+                            >
+                        </TextField>
+                        <TextField
                             label="Number"
                             variant="outlined" 
                             margin="normal"
@@ -637,7 +591,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                             <TableHead sx={{backgroundColor:"#0083ff"}}>
                                 <TableRow>
                                     <TableCell align="center" sx={{color:"white",fontSize:"20px"}}>#</TableCell>
-                                    <TableCell align="center" sx={{color:"white",fontSize:"20px"}}>X</TableCell>
+                                    {this.getHeaderX()}
                                     <TableCell align="center" sx={{color:"white",fontSize:"20px"}}>Y</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -673,7 +627,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                         </label>
                     </div> */}
                     <div>
-                        {/* <label>
+                    <label>
                             X_CAL :{" "}
                             <TextField 
                                 label="XCal" 
@@ -686,23 +640,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                                 onChange={this.handelQuestion}
                             >
                             </TextField>
-                        </label> */}
-                    </div>
-                    <div>
-                        {/* <label>
-                            Point :{" "}
-                            <TextField
-                                label="Point" 
-                                variant="outlined" 
-                                margin="normal"
-                                disabled = {(!this.state.Custom_Para)}
-                                type="text" 
-                                name="Point"
-                                value={this.state.Point}
-                                onChange={this.handelQuestion}
-                            >
-                            </TextField>
-                        </label> */}
+                        </label>
                     </div>
                     <div>
                         {this.get_custom_param()}
@@ -717,19 +655,16 @@ class Unit3 extends React.Component<Iprops,Istate>
                             calulator
                         </Button>
                     </div>
-                    <div style={{display: "flex"}}>
+                    {/* <div style={{display: "flex"}}>
                         <MathJaxContext>
                             <h2>X: {this.showEquation1()}</h2>
                         </MathJaxContext>
                         <MathJaxContext>
                             <h2>Y : {this.showEquation2()}</h2>
                         </MathJaxContext>
-                    </div>
+                    </div> */}
                     <div>
                         <h2>X_CAL : {this.state.Current_Question}</h2>
-                    </div>
-                    <div>
-                        <h2>Point : {this.state.Point}</h2>
                     </div>
                     <div>
                         <h2>Result : {this.state.Result.toFixed(6)}</h2>

@@ -366,7 +366,7 @@ class Unit1 extends React.Component<Iprops,Istate>
     get_Select_Question = () =>
     {
         let result:Array<any> = []
-        if(this.state.Data.Question.length !== 0&&this.state.Cerrent_Question!=="")
+        if(this.state.Data.Question.length !== 0)
         {   
             for(let i = 0;i<this.state.Data.Question.length;i++)
             {
@@ -533,6 +533,40 @@ class Unit1 extends React.Component<Iprops,Istate>
             )
         }
     }
+    showTrueResult = () =>
+    {
+        if(this.state.Cerrent_Question!=="")
+        {
+            if(this.props.SubHeader==="OnePointIteration")
+            {
+                try {
+                    return ( 
+                        <div>
+                            <h2>TestResult : {parseFloat(((math.evaluate(this.state.Cerrent_Question,{x:this.state.Result}) as number ) - (this.state.Result as number)).toString()).toFixed(6)}</h2>
+                        </div>
+                    )
+                } catch (error) {
+                    return <div></div>
+                }
+            }
+            else
+            {
+                try {
+                    return ( 
+                        <div>
+                            <h2>TestResult : {parseFloat(math.evaluate(this.state.Cerrent_Question,{x:this.state.Result})).toFixed(6)}</h2>
+                        </div>
+                    )
+                } catch (error) {
+                    return <div></div>
+                }
+            }
+        }
+        else
+        {
+            return <div></div>
+        }
+    }
     render()
     {
         return(
@@ -540,14 +574,6 @@ class Unit1 extends React.Component<Iprops,Istate>
                 <h1>{this.state.Data.Name}</h1>
                 <h2>{this.state.Data.Context}</h2>
                 <div>
-                    {/* <div>
-                        <label>
-                            Select Question :
-                            <select value={this.state.Cerrent_Question} onChange={this.set_Current_Question}>
-                                {this.get_Select_Question()}
-                            </select>
-                        </label>
-                    </div> */}
                     <div>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 400 }}>
                             <InputLabel id="Select-Question-Unit1">Question</InputLabel>
@@ -626,8 +652,9 @@ class Unit1 extends React.Component<Iprops,Istate>
                         </MathJaxContext>
                     </div>
                     <div>
-                        <h2>Result : {this.state.Result}</h2>
+                        <h2>Result : {this.state.Result.toFixed(6)}</h2>
                     </div>
+                        {this.showTrueResult()}
                     <div>
                         <Unit1Chart Unit={this.state.SubHeader} loop_result={this.state.LoopResult} Loop_Error ={this.state.LoopError} L={this.state.L} R = {this.state.R} Q = {this.state.Cerrent_Question}/>
                     </div>
