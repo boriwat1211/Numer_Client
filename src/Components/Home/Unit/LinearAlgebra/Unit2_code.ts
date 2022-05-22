@@ -418,6 +418,7 @@ export class Cal_LUdecomposition
             }
             Y[i]=(this.Met2[i]-sum)/Lower[i][i];
         }
+        console.log(Y)
         for(let i =this.Met1.length-1;i>=0;i--)
         {
             let sum =0;

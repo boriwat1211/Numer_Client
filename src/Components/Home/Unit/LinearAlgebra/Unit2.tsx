@@ -392,6 +392,7 @@ class Unit2 extends React.Component<Iprops,Istate>
         }
         else if(check1.test(e.target.name))
         {  
+            console.log(e.target.name)
             if(e.target.value===""||e.target.value==="-")
             {
                 let temp:Array<Array<number>> = this.state.Cerrent_Question1
@@ -429,6 +430,7 @@ class Unit2 extends React.Component<Iprops,Istate>
         }
         else if(check2.test(e.target.name))
         {  
+            console.log(e.target.name)
             if(e.target.value===""||e.target.value==="-")
             {
                 let temp:Array<number>= this.state.Cerrent_Question2

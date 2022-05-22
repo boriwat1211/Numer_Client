@@ -1,5 +1,7 @@
 import React from "react"
 import withRouter from "./Custom_HOC"
+import Unit6 from "./Unit/DividedDifferences/Unit6"
+import Unit5 from "./Unit/Integration/Unit5"
 import Unit3 from "./Unit/Interpolation/Unit3"
 import Unit4 from "./Unit/LeastSquare/Unit4"
 import Unit2 from "./Unit/LinearAlgebra/Unit2"
@@ -70,6 +72,22 @@ class MainSwitch extends React.Component<Iprops,Istate>
                         <Unit4 Token={this.props.Token}
                                Header={this.state.Header}
                                SubHeader={this.state.SubHeader}/>
+                    </div>
+                )
+            case "Integration":
+                return(
+                    <div>
+                        <Unit5 Token={this.props.Token}
+                               Header={this.state.Header}
+                               SubHeader={this.state.SubHeader} />
+                    </div>
+                )
+            case "Differentiation":
+                return(
+                    <div>
+                        <Unit6  Token={this.props.Token}
+                                Header={this.state.Header}
+                                SubHeader={this.state.SubHeader} />
                     </div>
                 )
         }
