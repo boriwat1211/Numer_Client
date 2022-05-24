@@ -42,9 +42,3 @@ jobs:
           with:
             push: true
             tags: boriwat01/numer_client_cd:latest
-
-
-        - name: Build and Push Docker Image
-          run:
-          env:
-            CI: true
