@@ -60,6 +60,8 @@ interface Istate
     Point:string,
     X:string,
     Height:string,
+    TrueResult:Number,
+    Error:Number
 }
 class Unit6 extends React.Component<Iprops,Istate>
 {
@@ -91,7 +93,9 @@ class Unit6 extends React.Component<Iprops,Istate>
             ErrorOrder:"O(h)",
             X:"",
             Height:"",
-            Point:"Forward"
+            Point:"Forward",
+            TrueResult:0,
+            Error:0
         }   
         this.get_Data() 
     }
@@ -100,7 +104,7 @@ class Unit6 extends React.Component<Iprops,Istate>
         let Result:any;
         let DividedDifference:Cal_DividedDifference= new Cal_DividedDifference(this.state.Cerrent_Question,this.state.Order,this.state.X,this.state.ErrorOrder,this.state.Height,this.state.Point);
         Result =  DividedDifference.Result()
-        this.setState({Result:Result});
+        this.setState({Result:Result[0]},()=>{this.setState({TrueResult:Result[1]},()=>{this.setState({Error:((parseFloat(this.state.TrueResult.toString())-parseFloat(this.state.Result.toString()))/parseFloat(this.state.TrueResult.toString()))*100})})});
     }
     get_Data = () =>
     {   
@@ -578,7 +582,12 @@ class Unit6 extends React.Component<Iprops,Istate>
                     <div>
                         <h2>Result : {this.state.Result.toFixed(6)}</h2>
                     </div>
-                        {this.showTrueResult()}
+                    <div>
+                        <h2>True Result : {this.state.TrueResult.toFixed(6)}</h2>
+                    </div>
+                    <div>
+                        <h2>Error : {this.state.Error.toFixed(6)}</h2>
+                    </div>
                     <div>
                     </div>
                 </div>
