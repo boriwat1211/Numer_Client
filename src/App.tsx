@@ -71,21 +71,21 @@ class App extends React.Component<IProps,IState>
   // }
   get_token = () =>
   {
-    axios.post<ServerResponse_Token>("http://localhost:6061/login",{
+    axios.post<ServerResponse_Token>("https://numerserver.herokuapp.com/login",{
       "email":"s6204062616251@email.kmutnb.ac.th",
       "password":"Aonboriwat01"
     }).then(res=>{this.setState({Token:res.data.accessToken},()=>this.get_header())})
   }
   get_header = () =>
   {
-    axios.get<ServerResponse_Header>("http://localhost:6061/Header",
+    axios.get<ServerResponse_Header>("https://numerserver.herokuapp.com/Header",
     {
         headers:{
           Authorization: 'Bearer ' + this.state.Token 
         }
     }).then((res)=>{
         this.setState({Header:res.data.Header},()=>{
-          axios.get<ServerResponse_SubHeader>("http://localhost:6061/SubHeader",{
+          axios.get<ServerResponse_SubHeader>("https://numerserver.herokuapp.com/SubHeader",{
             headers:{
               Authorization: 'Bearer ' + this.state.Token 
             }

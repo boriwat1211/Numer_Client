@@ -247,7 +247,7 @@ class Unit2 extends React.Component<Iprops,Istate>
         //         this.setState({Cerrent_Question2:this.state.Data.Question2[0].toString().replace(/\r/g,"")},()=>this.Get_Result())
         //     })})
         // })      
-        axios.get<ServerResponse_Data>("http://localhost:6061/Data/"+this.state.SubHeader,{
+        axios.get<ServerResponse_Data>("https://numerserver.herokuapp.com/Data/"+this.state.SubHeader,{
             headers:{
                 Authorization: 'Bearer ' + this.props.Token 
             }

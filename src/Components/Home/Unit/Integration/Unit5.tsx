@@ -115,7 +115,7 @@ class Unit5 extends React.Component<Iprops,Istate>
     }
     get_Data = () =>
     {   
-        axios.get<ServerResponse_Data>("http://localhost:6061/Data/"+this.state.SubHeader,
+        axios.get<ServerResponse_Data>("https://numerserver.herokuapp.com/Data/"+this.state.SubHeader,
         {
             headers:{
                 Authorization: 'Bearer ' + this.props.Token 
