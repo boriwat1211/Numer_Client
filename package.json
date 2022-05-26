@@ -16,6 +16,7 @@
     "@types/react-syntax-highlighter": "^13.5.2",
     "axios": "^0.24.0",
     "better-react-mathjax": "^1.0.3",
+    "cubic-spline": "^3.0.3",
     "mathjs": "^10.1.0",
     "mathlive": "^0.69.9",
     "react": "^17.0.2",

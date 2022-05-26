@@ -87,5 +87,22 @@ export class Cal_LagrangeInterpolation
 }
 export class Cal_SplineInterpolation
 {
-    
+    private X:Array<number>
+    private Y:Array<number>
+    private X_CAL:number
+    private Point:Array<number>
+    constructor(x:Array<number>,y:Array<number>,x_cal:string,point:string)
+    {
+        this.X = JSON.parse(JSON.stringify(x));
+        this.Y = JSON.parse(JSON.stringify(y));
+        this.X_CAL = parseFloat(x_cal);
+        this.Point = JSON.parse("["+point+"]");
+        for(let i:number =0;i<this.Point.length;i++) this.Point[i]-=1
+    }
+    public Result():number
+    {
+        const Spline = require('cubic-spline');
+        const spline = new Spline(this.X,this.Y);
+        return spline.at(this.X_CAL);
+    }
 }

@@ -353,6 +353,34 @@ test("LagrangeInterpolation test",async () =>{
 
 },60000)
 
+test("SplineInterpolation test",async () =>{
+  render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  )
+  await waitFor(()=>{expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument()},{timeout:1500})
+  await waitFor(()=>{expect(screen.getByText(/SplineInterpolation/i)).toBeInTheDocument()},{timeout:5000})
+  const history = createMemoryHistory()
+  history.push('/InterpolationTechniques/SplineInterpolation')
+  render(
+    <Router location={history.location} navigator={history}>
+        <App />
+    </Router>
+  );
+  //case1
+  await waitFor(()=>{expect(screen.getByText("Result : 220.604665")).toBeInTheDocument()},{timeout:5000})
+  //case2
+  fireEvent.change(screen.getByTestId("Unit3-Select-Question") as HTMLInputElement,{target: {value: "[0,20000,40000,60000,80000]"}});
+  await waitFor(()=>{expect((screen.getByTestId("Unit3-Select-Question") as HTMLInputElement).value).toEqual("[0,20000,40000,60000,80000]")},{timeout:5000})
+  await waitFor(()=>{expect(screen.getByText("Result : 9.687077")).toBeInTheDocument()},{timeout:5000})
+  //case3
+  fireEvent.change(screen.getByTestId("Unit3-Select-Question") as HTMLInputElement,{target: {value: "[2,3,4]"}});
+  await waitFor(()=>{expect((screen.getByTestId("Unit3-Select-Question") as HTMLInputElement).value).toEqual("[2,3,4]")},{timeout:5000})
+  await waitFor(()=>{expect(screen.getByText("Result : -0.312484")).toBeInTheDocument()},{timeout:5000})
+
+},60000)
+
 test("LinearRegression test",async () =>{
   render(
     <BrowserRouter>

@@ -2,7 +2,7 @@ import axios from "axios";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import React, { ChangeEvent } from "react";
 import * as math from 'mathjs'
-import { Cal_LagrangeInterpolation, Cal_NewtonDividedDifference } from "./Unit3_code";
+import { Cal_LagrangeInterpolation, Cal_NewtonDividedDifference, Cal_SplineInterpolation } from "./Unit3_code";
 
 
 
@@ -141,6 +141,9 @@ class Unit3 extends React.Component<Iprops,Istate>
                 this.setState({Result:Result})
                 break;
             case "SplineInterpolation":
+                let SplineInterpolation:Cal_SplineInterpolation = new Cal_SplineInterpolation(this.state.Cerrent_Question1,this.state.Cerrent_Question2,this.state.Current_Question,this.state.Point)
+                Result = SplineInterpolation.Result()
+                this.setState({Result:Result})
                 break;
         }
     }
@@ -328,7 +331,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                             this.Get_Result()
                         }
                         break;
-                    case "PolynomialInterpolation":
+                    case "SplineInterpolation":
                         if(Object.values(this.state.Custom_Para_list.SplineInterpolation).includes(""))
                         {
                             alert("Enter all inputs!!")
@@ -536,7 +539,7 @@ class Unit3 extends React.Component<Iprops,Istate>
                             {i+1}
                             <Checkbox
                                 key={i.toString()}
-                                disabled = {!this.state.Custom_Para}
+                                disabled = {!this.state.Custom_Para || this.props.SubHeader === "SplineInterpolation"}
                                 name={`${i}`}
                                 checked = {this.state.PointChecker[i]}
                                 onChange ={this.onCheckPoint}
@@ -631,6 +634,19 @@ class Unit3 extends React.Component<Iprops,Istate>
                             type = "text"
                             name="dimensionX"
                             value={this.state.dimensionX}
+                            onChange={this.handelQuestion}
+                            >
+                        </TextField>
+                    </div>
+                    <div>
+                        <TextField
+                            label="XCal"
+                            variant="outlined" 
+                            margin="normal"
+                            disabled = {(!this.state.Custom_Para)}
+                            type = "text"
+                            name="Question"
+                            value={this.state.Current_Question}
                             onChange={this.handelQuestion}
                             >
                         </TextField>
