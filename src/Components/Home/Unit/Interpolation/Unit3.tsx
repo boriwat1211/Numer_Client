@@ -596,6 +596,11 @@ class Unit3 extends React.Component<Iprops,Istate>
                                 id="Select-Qusetion-Unit2-Value"
                                 value={JSON.stringify(this.state.Cerrent_Question1)==="[]"? "":JSON.stringify(this.state.Cerrent_Question1)}
                                 onChange={this.set_Current_Question}
+                                inputProps={
+                                    {
+                                        "data-testid":"Unit3-Select-Question"
+                                    }
+                                }
                             >
                                 {this.get_Select_Question()}
                             </Select>

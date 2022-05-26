@@ -1,5 +1,6 @@
 import React from "react"
 import withRouter from "./Custom_HOC"
+import Home from "./Home"
 import Unit6 from "./Unit/DividedDifferences/Unit6"
 import Unit5 from "./Unit/Integration/Unit5"
 import Unit3 from "./Unit/Interpolation/Unit3"
@@ -89,6 +90,10 @@ class MainSwitch extends React.Component<Iprops,Istate>
                                 Header={this.state.Header}
                                 SubHeader={this.state.SubHeader} />
                     </div>
+                )
+            default:
+                return(
+                    <Home></Home>
                 )
         }
     }

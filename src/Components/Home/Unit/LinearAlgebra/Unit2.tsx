@@ -944,7 +944,7 @@ class Unit2 extends React.Component<Iprops,Istate>
         {
             try{
                 return(
-                    <MathJax dynamic inline >{"\\("+math.parse("["+this.state.Result.toString().replace(/\r/g,"")+"]").toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
+                    <MathJax placeholder="Unit2Result" aria-valuetext={this.state.Result.toString().replace(/\r/g,"")} dynamic inline >{"\\("+math.parse("["+this.state.Result.toString().replace(/\r/g,"")+"]").toTex({parenthesis: 'keep',implicit: 'show'})+"\\)"}</MathJax>
                 )
             }
             catch(err:any)

@@ -20,7 +20,7 @@ class Home extends React.Component<Iprops,Istate>
     render(){
         return(  
             <div>
-                <h1>home : Boriwat </h1>
+                <h1>home : Boriwat</h1>
             </div>
         )
     }

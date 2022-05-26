@@ -2,11 +2,11 @@ import React from 'react';
 import './App.css';
 import Home from './Components/Home/Home';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import axios from "axios"
 import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
 import './Custom.scss'
-import qs from 'qs'
 import MainSwitch from './Components/Home/MainSwitch';
 interface ServerResponse_Header
 {
@@ -140,28 +140,30 @@ class App extends React.Component<IProps,IState>
       )
     }
     return(
-      <div className='Main'>
+      <div className='Main' data-testid ="ShowData">
         <div className='Left' onMouseOver={()=>{if(this.state.collapsed){this.setState({collapsed:false})}}}>
           <div style={{ position: "sticky",top:"0"}}>
           </div>
-          <ProSidebar collapsed = {this.state.collapsed}> 
-            <Menu>
-              <MenuItem key={"HOME"} style={{fontSize:"20px"}}>HOME
+          <ProSidebar collapsed = {this.state.collapsed} placeholder="MenuBar"> 
+            <Menu placeholder='Menu'>
+              <MenuItem key={"HOME"} style={{fontSize:"20px"}}>
+                HOME
                 <Link to = {"/"}/>
               </MenuItem>
               {this.get_Header_Menu()}
             </Menu>
           </ProSidebar>
         </div>
+        
         <div className='Right' onMouseOver={()=>{if(!this.state.collapsed){this.setState({collapsed:true})}}}>
-          <Routes>
-            <Route path = ":Header/:SubHeader" element = {<MainSwitch Token = {this.state.Token}/>}></Route>
-            <Route path = "/" element = {<Home/>}></Route>
-            <Route
-                  path="*"
-                  element={<Navigate to="/" />}
-              />
-          </Routes>
+            <Routes>
+              <Route path = ":Header/:SubHeader" element = {<MainSwitch Token = {this.state.Token}/>}></Route>
+              <Route path = "/" element = {<Home/>}></Route>
+              <Route
+                    path="*"
+                    element={<Navigate to="/" />}
+                />
+            </Routes>
         </div>
       </div>
     )
