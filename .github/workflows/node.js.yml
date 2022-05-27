@@ -58,10 +58,17 @@ jobs:
 
   job3:
     needs: [job1,job2]
-        steps:
-        - uses: actions/checkout@v2
-        - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-          with:
-            heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-            heroku_app_name: "numerclient" #Must be unique in Heroku
-            heroku_email: "boriwat1211@gmail.com"
+    DEPLOY-TO-HEROKU:
+      runs-on: ubuntu-latest
+
+      strategy:
+        matrix:
+          node-version: [17.x]
+    
+      steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "numerclient" #Must be unique in Heroku
+          heroku_email: "boriwat1211@gmail.com"
