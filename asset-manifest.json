@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Numer_Client/static/css/main.44b58a99.css",
-    "main.js": "/Numer_Client/static/js/main.092d1302.js",
-    "static/js/787.aa5e199d.chunk.js": "/Numer_Client/static/js/787.aa5e199d.chunk.js",
-    "index.html": "/Numer_Client/index.html",
-    "main.44b58a99.css.map": "/Numer_Client/static/css/main.44b58a99.css.map",
-    "main.092d1302.js.map": "/Numer_Client/static/js/main.092d1302.js.map",
-    "787.aa5e199d.chunk.js.map": "/Numer_Client/static/js/787.aa5e199d.chunk.js.map"
+    "main.css": "https://boriwat1211.github.io/Numer_Client/static/css/main.44b58a99.css",
+    "main.js": "https://boriwat1211.github.io/Numer_Client/static/js/main.ef511aa4.js",
+    "static/js/787.aa5e199d.chunk.js": "https://boriwat1211.github.io/Numer_Client/static/js/787.aa5e199d.chunk.js",
+    "index.html": "https://boriwat1211.github.io/Numer_Client/index.html",
+    "main.44b58a99.css.map": "https://boriwat1211.github.io/Numer_Client/static/css/main.44b58a99.css.map",
+    "main.ef511aa4.js.map": "https://boriwat1211.github.io/Numer_Client/static/js/main.ef511aa4.js.map",
+    "787.aa5e199d.chunk.js.map": "https://boriwat1211.github.io/Numer_Client/static/js/787.aa5e199d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.44b58a99.css",
-    "static/js/main.092d1302.js"
+    "static/js/main.ef511aa4.js"
   ]
 }
