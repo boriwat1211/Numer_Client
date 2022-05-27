@@ -48,7 +48,7 @@ jobs:
           tags: boriwat01/numer_client_cd:latest
 
   DEPLOY-TO-HEROKU:
-    needs: [ INSTALL-AND-TEST]
+    needs: [INSTALL-AND-TEST]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -60,3 +60,24 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "numerclient" 
         heroku_email: "boriwat1211@gmail.com"
+  
+  DEPLOY-TO-GitHub-PAGE:
+    needs: [INSTALL-AND-TEST]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [17.x]
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install and Build 🔧 
+      run: |
+        yarn install --frozen-lockfile
+        yarn run build
+
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      with:
+        branch: gh-pages
+        folder: build 
