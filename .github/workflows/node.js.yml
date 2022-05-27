@@ -15,17 +15,16 @@ jobs:
     strategy:
       matrix:
         node-version: [17.x]
+    steps:
+      - uses: actions/checkout@master
 
-      steps:
-        - uses: actions/checkout@master
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ matrix.node-version }}
 
-        - name: Set up Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@master
-          with:
-            node-version: ${{ matrix.node-version }}
-
-        - name: Install packages
-          run: yarn install --frozen-lockfile
+      - name: Install packages
+        run: yarn install --frozen-lockfile
 
   TEST-CASE:
     needs: Install-Built
@@ -33,10 +32,9 @@ jobs:
     strategy:
       matrix:
         node-version: [17.x]
-    
-      steps:
-        - name: Test
-          run: yarn test
+    steps:
+      - name: Test
+        run: yarn test
           
         # - name: Set up Docker Buildx
         #   uses: docker/setup-buildx-action@v2
@@ -59,11 +57,10 @@ jobs:
     strategy:
       matrix:
         node-version: [17.x]
-  
-      steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "numerclient" #Must be unique in Heroku
-          heroku_email: "boriwat1211@gmail.com"
+    steps:
+    - uses: actions/checkout@v2
+    - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: "numerclient" #Must be unique in Heroku
+        heroku_email: "boriwat1211@gmail.com"
