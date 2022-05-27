@@ -12,10 +12,9 @@ on:
 jobs:
   Install-Built:
     runs-on: ubuntu-latest
-
-      strategy:
-        matrix:
-          node-version: [17.x]
+    strategy:
+      matrix:
+        node-version: [17.x]
 
       steps:
         - uses: actions/checkout@master
@@ -31,10 +30,9 @@ jobs:
   TEST-CASE:
     needs: Install-Built
     runs-on: ubuntu-latest
-
-      strategy:
-        matrix:
-          node-version: [17.x]
+    strategy:
+      matrix:
+        node-version: [17.x]
     
       steps:
         - name: Test
@@ -57,13 +55,11 @@ jobs:
 
   DEPLOY-TO-HEROKU:
     needs: [Install-Built,TEST-CASE]
-
-      runs-on: ubuntu-latest
-
-      strategy:
-        matrix:
-          node-version: [17.x]
-    
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [17.x]
+  
       steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
