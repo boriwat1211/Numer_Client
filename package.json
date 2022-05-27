@@ -1,6 +1,5 @@
 {
   "name": "project01",
-  "homepage": "https://boriwat1211.github.io/Numer_Client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -35,7 +34,8 @@
   "scripts": {
     "start": "npm-run-all -p start-ts",
     "start-ts": "react-scripts start",
-    "build": "CI=false && react-scripts build",
+    "build": "react-scripts build",
+    "build-github":"CI=false && PUBLIC_URL=https://boriwat1211.github.io/Numer_Client build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
