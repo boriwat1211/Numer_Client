@@ -11,7 +11,7 @@ on:
 
 jobs:
   job1:
-    Install-Built:
+    name: Install-Built:
       runs-on: ubuntu-latest
 
       strategy:
@@ -29,8 +29,8 @@ jobs:
         - name: Install packages
           run: yarn install --frozen-lockfile
   job2:
+    name: TEST-CASE:
     needs: job1
-    TEST-CASE:
       runs-on: ubuntu-latest
 
       strategy:
@@ -57,8 +57,9 @@ jobs:
         #     tags: boriwat01/numer_client_cd:latest
 
   job3:
+    name: DEPLOY-TO-HEROKU:
     needs: [job1,job2]
-    DEPLOY-TO-HEROKU:
+    
       runs-on: ubuntu-latest
 
       strategy:
