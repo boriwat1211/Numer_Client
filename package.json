@@ -39,7 +39,6 @@
     "start-ts": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "heroku-postbuild": "npm install && cd client && npm install && npm run build",
     "eject": "react-scripts eject",
     "server": "json-server --watch ./serverJSON/Data.json --port 6061 -m ./node_modules/json-server-auth -r ./serverJSON/routes.json"
   },
