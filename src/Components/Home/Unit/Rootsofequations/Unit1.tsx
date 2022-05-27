@@ -664,7 +664,6 @@ class Unit1 extends React.Component<Iprops,Istate>
                         <Unit1Chart Unit={this.state.SubHeader} loop_result={this.state.LoopResult} Loop_Error ={this.state.LoopError} L={this.state.L} R = {this.state.R} Q = {this.state.Cerrent_Question}/>
                     </div>
                 </div>
-                <h1>TESTSTSETSETSETSETSETSETSET</h1>
             </div>
         )
     }
