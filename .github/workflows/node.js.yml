@@ -10,6 +10,7 @@ on:
     branches: [ master ]
 
 jobs:
+  job1:
     install-and-test:
       runs-on: ubuntu-latest
 
@@ -27,6 +28,9 @@ jobs:
 
         - name: Install packages
           run: yarn install --frozen-lockfile
+  job2:
+    needs: job1
+      steps:
 
         - name: Test
           run: yarn test
@@ -46,8 +50,9 @@ jobs:
         #     push: true
         #     tags: boriwat01/numer_client_cd:latest
 
-
-        #push to heroku and docker
+  job3:
+    needs: [job1,job2]
+        steps:
         - uses: actions/checkout@v2
         - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
           with:
