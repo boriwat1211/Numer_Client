@@ -31,20 +31,20 @@ jobs:
         - name: Test
           run: yarn test
           
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v2
+        # - name: Set up Docker Buildx
+        #   uses: docker/setup-buildx-action@v2
         
-        - name: Login to DockerHub
-          uses: docker/login-action@v2
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        # - name: Login to DockerHub
+        #   uses: docker/login-action@v2
+        #   with:
+        #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+        #     password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-        - name: Build and push
-          uses: docker/build-push-action@v3
-          with:
-            push: true
-            tags: boriwat01/numer_client_cd:latest
+        # - name: Build and push
+        #   uses: docker/build-push-action@v3
+        #   with:
+        #     push: true
+        #     tags: boriwat01/numer_client_cd:latest
 
 
         #push to heroku and docker
@@ -54,4 +54,3 @@ jobs:
             heroku_api_key: ${{secrets.HEROKU_API_KEY}}
             heroku_app_name: "numerclientdocker" #Must be unique in Heroku
             heroku_email: "boriwat1211@gmail.com"
-            usedocker: true
